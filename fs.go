@@ -2,17 +2,10 @@ package docker
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/url"
 	"os"
-	"path/filepath"
 
 	docker "github.com/fsouza/go-dockerclient"
 	"github.com/pkg/errors"
-
-	"bitbucket.org/hwuligans/rai/pkg/amazon"
-	"bitbucket.org/hwuligans/rai/pkg/archive"
-	"bitbucket.org/hwuligans/rai/pkg/config"
 )
 
 func (c *Container) UploadToContainer(targetPath string, sourcePath string) error {
@@ -58,47 +51,47 @@ func (c *Container) UploadToContainer(targetPath string, sourcePath string) erro
 	return nil
 }
 
-func (c *Container) UploadToContainerFromS3(targetPath string, key string) error {
-	s3, err := amazon.NewS3("")
-	if err != nil {
-		msg := "Failed to upload s3 to container due to not " +
-			"being able to create an s3 connection"
-		log.WithError(err).Error(msg)
-		return errors.Wrapf(err, msg)
-	}
+// func (c *Container) UploadToContainerFromS3(targetPath string, key string) error {
+// 	s3, err := amazon.NewS3("")
+// 	if err != nil {
+// 		msg := "Failed to upload s3 to container due to not " +
+// 			"being able to create an s3 connection"
+// 		log.WithError(err).Error(msg)
+// 		return errors.Wrapf(err, msg)
+// 	}
 
-	tmpDir, err := ioutil.TempDir("", config.App.Name)
-	if err != nil {
-		msg := "Failed to create temporary directory for s3 to upload to container"
-		log.WithError(err).
-			WithField("temp_dir", tmpDir).
-			Error(msg)
-		return errors.Wrap(err, msg)
-	}
-	defer os.RemoveAll(tmpDir)
+// 	tmpDir, err := ioutil.TempDir("", config.App.Name)
+// 	if err != nil {
+// 		msg := "Failed to create temporary directory for s3 to upload to container"
+// 		log.WithError(err).
+// 			WithField("temp_dir", tmpDir).
+// 			Error(msg)
+// 		return errors.Wrap(err, msg)
+// 	}
+// 	defer os.RemoveAll(tmpDir)
 
-	var fileBaseName string
-	if u, err := url.Parse(key); err != nil {
-		fileBaseName = filepath.Base(u.Path)
-	} else {
-		fileBaseName = filepath.Base(key)
-	}
-	fileName := filepath.Join(tmpDir, fileBaseName)
-	log.WithField("key", key).
-		WithField("fileName", fileName).
-		WithField("targetPath", targetPath).
-		Debug("Downloading from S3")
+// 	var fileBaseName string
+// 	if u, err := url.Parse(key); err != nil {
+// 		fileBaseName = filepath.Base(u.Path)
+// 	} else {
+// 		fileBaseName = filepath.Base(key)
+// 	}
+// 	fileName := filepath.Join(tmpDir, fileBaseName)
+// 	log.WithField("key", key).
+// 		WithField("fileName", fileName).
+// 		WithField("targetPath", targetPath).
+// 		Debug("Downloading from S3")
 
-	err = s3.Download(fileName, key)
-	if err != nil {
-		msg := fmt.Sprintf("Failed to upload s3 to container due to not "+
-			"be able to download s3 with key=%v", key)
-		log.WithError(err).Error(msg)
-		return errors.Wrapf(err, msg)
-	}
+// 	err = s3.Download(fileName, key)
+// 	if err != nil {
+// 		msg := fmt.Sprintf("Failed to upload s3 to container due to not "+
+// 			"be able to download s3 with key=%v", key)
+// 		log.WithError(err).Error(msg)
+// 		return errors.Wrapf(err, msg)
+// 	}
 
-	return c.UploadToContainer(targetPath, fileName)
-}
+// 	return c.UploadToContainer(targetPath, fileName)
+// }
 
 func (c *Container) DownloadFromContainer(targetPath string, sourcePath string) error {
 
@@ -140,44 +133,44 @@ func (c *Container) DownloadFromContainer(targetPath string, sourcePath string) 
 	return nil
 }
 
-func (c *Container) DownloadFromContainerToS3(sourcePath string) (string, error) {
-	s3, err := amazon.NewS3("")
-	if err != nil {
-		msg := "Failed to download from container to s3 due to not " +
-			"being able to create an s3 connection"
-		log.WithError(err).Error(msg)
-		return "", errors.Wrap(err, msg)
-	}
+// func (c *Container) DownloadFromContainerToS3(sourcePath string) (string, error) {
+// 	s3, err := amazon.NewS3("")
+// 	if err != nil {
+// 		msg := "Failed to download from container to s3 due to not " +
+// 			"being able to create an s3 connection"
+// 		log.WithError(err).Error(msg)
+// 		return "", errors.Wrap(err, msg)
+// 	}
 
-	tmpDir, err := ioutil.TempDir("", config.App.Name)
-	if err != nil {
-		msg := "Failed to create temporary directory for s3 to download from container"
-		log.WithError(err).
-			WithField("source_path", sourcePath).
-			WithField("temp_dir", tmpDir).
-			Error(msg)
-		return "", errors.Wrap(err, msg)
-	}
-	defer os.RemoveAll(tmpDir)
+// 	tmpDir, err := ioutil.TempDir("", config.App.Name)
+// 	if err != nil {
+// 		msg := "Failed to create temporary directory for s3 to download from container"
+// 		log.WithError(err).
+// 			WithField("source_path", sourcePath).
+// 			WithField("temp_dir", tmpDir).
+// 			Error(msg)
+// 		return "", errors.Wrap(err, msg)
+// 	}
+// 	defer os.RemoveAll(tmpDir)
 
-	fileName := filepath.Join(tmpDir, c.ID+archive.FileExtension)
+// 	fileName := filepath.Join(tmpDir, c.ID+archive.FileExtension)
 
-	err = c.DownloadFromContainer(fileName, sourcePath)
-	if err != nil {
-		msg := "Failed to download from container to s3."
-		log.WithError(err).Error(msg)
-		return "", errors.Wrap(err, msg)
-	}
+// 	err = c.DownloadFromContainer(fileName, sourcePath)
+// 	if err != nil {
+// 		msg := "Failed to download from container to s3."
+// 		log.WithError(err).Error(msg)
+// 		return "", errors.Wrap(err, msg)
+// 	}
 
-	key, err := s3.Upload(fileName, false)
-	if err != nil {
-		msg := "Failed to upload from container to s3 to due to not " +
-			"be able to upload s3"
-		log.WithError(err).Error(msg)
-		return "", errors.Wrap(err, msg)
-	}
-	return key, nil
-}
+// 	key, err := s3.Upload(fileName, false)
+// 	if err != nil {
+// 		msg := "Failed to upload from container to s3 to due to not " +
+// 			"be able to upload s3"
+// 		log.WithError(err).Error(msg)
+// 		return "", errors.Wrap(err, msg)
+// 	}
+// 	return key, nil
+// }
 
 func (c *Container) checkIsRunning() error {
 	client := c.client

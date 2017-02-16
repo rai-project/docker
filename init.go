@@ -6,9 +6,8 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	dc "github.com/fsouza/go-dockerclient"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
-	logger "bitbucket.org/hwuligans/rai/pkg/logger"
-	"bitbucket.org/hwuligans/rai/pkg/utils"
+	"github.com/rai-project/config"
+	logger "github.com/rai-project/logger"
 )
 
 var (
@@ -21,15 +20,10 @@ var (
 
 func init() {
 	config.OnInit(func() {
-		log = logger.WithField("pkg", "docker").
-			WithField("ip", utils.GetHostIP()).
-			WithField("mode", config.Mode.String()).
-			WithField("user", config.User.String())
-		if !config.Mode.IsServer { // docker is only enabled in server mode
-			return
-		}
+		log = logger.WithField("pkg", "docker")
+
 		var endpoint string
-		for _, loc := range config.Docker.Endpoints {
+		for _, loc := range Config.Endpoints {
 			if com.IsFile(loc) {
 				endpoint = loc
 				break
@@ -37,7 +31,7 @@ func init() {
 		}
 
 		if endpoint == "" {
-			log.WithField("endpoints", spew.Sprint(config.Docker.Endpoints)).Fatal("Cannot find any docker endpoint")
+			log.WithField("endpoints", spew.Sprint(Config.Endpoints)).Fatal("Cannot find any docker endpoint")
 			return
 		}
 
@@ -56,11 +50,11 @@ func init() {
 		}
 		log.WithField("version", env.Get("Version")).Debug("Connected to docker client.")
 
-		err = client.GetImage(config.Docker.Image, config.Docker.Tag)
+		err = client.GetImage(Config.Repository, Config.Tag)
 		if err != nil {
 			log.WithError(err).
-				WithField("image", config.Docker.Image).
-				WithField("tag", config.Docker.Tag).
+				WithField("image", Config.Repository).
+				WithField("tag", Config.Tag).
 				Error("Failed to pull docker image")
 			return
 		}
@@ -70,7 +64,7 @@ func init() {
 			AutoRemove:      false,
 			PublishAllPorts: false,
 			ReadonlyRootfs:  false,
-			Memory:          int64(config.Docker.MemoryLimit),
+			Memory:          int64(Config.MemoryLimit),
 			CapDrop: []string{ // see http://rhelblog.redhat.com/2016/10/17/secure-your-containers-with-this-one-weird-trick/
 				"chown",
 				"dac_override",

@@ -2,19 +2,48 @@ package docker
 
 import (
 	"bytes"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
+	sourcepath "github.com/GeertJohan/go-sourcepath"
+	"github.com/rai-project/config"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExecution(t *testing.T) {
+var testYamlPath = "config_test.yml"
+var testYaml = `docker:
+    repository: "ubuntu"
+    tag: "latest"
+    user: ""
+`
+
+func TestMain(m *testing.M) {
+	// flag.Parse()
+	bytes := []byte(testYaml)
+	err := ioutil.WriteFile(testYamlPath, bytes, 0777)
+
+	if err != nil {
+		panic("cannot create temp yaml config file needed for testing")
+	}
+	defer os.Remove(testYamlPath)
+
+	config.ConfigFileName = filepath.Join(sourcepath.MustAbsoluteDir(), testYamlPath)
 	config.Init()
+
+	os.Exit(m.Run())
+}
+
+func TestExecution(t *testing.T) {
 
 	client, err := NewClient()
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
+
+	err = client.PullImage(Config.Repository, Config.Tag)
+	assert.NoError(t, err)
 
 	cont, err := NewContainer(client)
 	assert.NoError(t, err)

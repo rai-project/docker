@@ -7,8 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
-	"bitbucket.org/hwuligans/rai/pkg/uuid"
+	"github.com/rai-project/config"
+	"github.com/rai-project/uuid"
 )
 
 type Container struct {
@@ -21,18 +21,19 @@ type Container struct {
 }
 
 func NewContainer(client *Client) (*Container, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), config.Docker.TimeLimit)
+	ctx, cancel := context.WithTimeout(context.Background(), Config.TimeLimit)
 	env := baseEnvsStringList()
 	name := fmt.Sprintf("%s-run-%s", config.App.Name, uuid.NewV4())
+	img := fmt.Sprintf("%s:%s", Config.Repository, Config.Tag)
 	opts := dc.CreateContainerOptions{
 		Name:       name,
 		HostConfig: hostConfig,
 		Config: &dc.Config{
-			Image:           fmt.Sprintf("%s:%s", config.Docker.Image, config.Docker.Tag),
+			Image:           img,
 			Hostname:        name,
-			User:            config.Docker.User,
+			User:            Config.User,
 			Env:             env,
-			Memory:          config.Docker.MemoryLimit,
+			Memory:          Config.MemoryLimit,
 			WorkingDir:      "/build",
 			AttachStdin:     false,
 			AttachStdout:    true,
@@ -41,21 +42,21 @@ func NewContainer(client *Client) (*Container, error) {
 			StdinOnce:       true,
 			Tty:             true,
 			NetworkDisabled: true,
-			VolumeDriver:    "nvidia-docker",
-			Mounts: []dc.Mount{
-				dc.Mount{
-					Name:        "nvidia_driver_367.57",
-					Source:      "/var/lib/nvidia-docker/volumes/nvidia_driver/367.57",
-					Destination: "/usr/local/nvidia",
-					Driver:      "nvidia-docker",
-					Mode:        "ro",
-					RW:          false,
-				},
-			},
-			Cmd: []string{
-				"sleep",
-				"4h",
-			},
+			// VolumeDriver:    "nvidia-docker",
+			// Mounts: []dc.Mount{
+			// 	dc.Mount{
+			// 		Name:        "nvidia_driver_367.57",
+			// 		Source:      "/var/lib/nvidia-docker/volumes/nvidia_driver/367.57",
+			// 		Destination: "/usr/local/nvidia",
+			// 		Driver:      "nvidia-docker",
+			// 		Mode:        "ro",
+			// 		RW:          false,
+			// 	},
+			// },
+			// Cmd: []string{
+			// 	"sleep",
+			// 	"4h",
+			// },
 			// Cmd: []string{
 			// 	"/bin/sh",
 			// 	"-c",
@@ -67,12 +68,14 @@ func NewContainer(client *Client) (*Container, error) {
 	cont, err := client.CreateContainer(opts)
 	if err != nil {
 		err = Error(err)
-		log.WithError(err).Error("Failed to create docker container.")
+		log.WithError(err).
+			WithField("image", img).
+			Error("Failed to create docker container.")
 		return nil, errors.Wrap(err, "Failed to create docker container.")
 	}
 	res := &Container{
-		ImageName: config.Docker.Image,
-		Tag:       config.Docker.Tag,
+		ImageName: Config.Repository,
+		Tag:       Config.Tag,
 		Container: cont,
 		client:    client,
 		cancel:    cancel,

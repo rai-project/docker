@@ -1,4 +1,3 @@
-
 package docker
 
 import dc "github.com/fsouza/go-dockerclient"
@@ -14,8 +13,5 @@ func NewClient() (*Client, error) {
 		return nil, err
 	}
 	c := &Client{client}
-	// if err := c.pullImage(config.Docker.Image, config.Docker.Tag); err != nil {
-	// 	return nil, err
-	// }
 	return c, nil
 }

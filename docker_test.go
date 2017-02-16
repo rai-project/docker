@@ -3,7 +3,7 @@ package docker
 import (
 	"testing"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
+	"github.com/rai-project/config"
 
 	"github.com/stretchr/testify/assert"
 )

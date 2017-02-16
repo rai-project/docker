@@ -1,13 +1,12 @@
-
 package docker
 
 import (
 	"fmt"
 	"path/filepath"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
-	"bitbucket.org/hwuligans/rai/pkg/utils"
-	"bitbucket.org/hwuligans/rai/pkg/uuid"
+	"github.com/rai-project/config"
+	"github.com/rai-project/utils"
+	"github.com/rai-project/uuid"
 )
 
 var (
@@ -22,7 +21,7 @@ func baseEnvs() map[string]string {
 	// ContainerDataDir := filepath.Join("/home", userName, "data")
 	// ContainerBuildDir := filepath.Join("/home", userName, "build")
 
-	userName := config.Docker.UserName
+	userName := Config.RaiUserName
 	return map[string]string{
 		"CI":             "rai",
 		"RAI":            "true",

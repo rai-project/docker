@@ -3,7 +3,7 @@ package docker
 import (
 	"testing"
 
-	"bitbucket.org/hwuligans/rai/pkg/config"
+	"github.com/rai-project/config"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -15,6 +15,6 @@ func TestDockerListImages(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
 
-	err = client.ListImages()
+	_, err = client.ListImages("image", "tag")
 	assert.NoError(t, err)
 }
