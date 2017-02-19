@@ -158,27 +158,13 @@ func (e *Execution) Start() error {
 		return errors.Wrapf(err,
 			"cannot create execution %v in container", strings.Join(cmd, " "))
 	}
+
 	e.execID = execID.ID
-
-	attachOpts := execOpts
-
-	// err = client.ContainerExecStart(
-	// 	e.context,
-	// 	e.execID,
-	// 	types.ExecStartCheck{
-	// 		Detach: false,
-	// 		Tty:    isTty,
-	// 	},
-	// )
-	// if err != nil {
-	// 	return errors.Wrapf(err,
-	// 		"cannot start execution %v in container", strings.Join(cmd, " "))
-	// }
 
 	resp, errAttach := client.ContainerExecAttach(
 		e.context,
 		e.execID,
-		attachOpts,
+		execOpts,
 	)
 	if errAttach != nil && errAttach != httputil.ErrPersistEOF {
 		// ContainerAttach returns an ErrPersistEOF (connection closed)
@@ -197,7 +183,7 @@ func (e *Execution) Start() error {
 		errHijack := holdHijackedConnection(
 			e.context,
 			strm,
-			attachOpts.Tty,
+			isTty,
 			e.Stdin,
 			e.Stdout,
 			e.Stderr,
@@ -210,11 +196,11 @@ func (e *Execution) Start() error {
 	})
 
 	e.wc = cErr
-
 	e.isStarted = true
 
 	return err
 }
+
 func (e *Execution) StdinPipe() (io.WriteCloser, error) {
 	if e.Stdin != nil {
 		return nil, errors.New("Docker execution:: Stdin already set")
@@ -284,6 +270,7 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 		err         error
 		restoreOnce sync.Once
 	)
+
 	if inputStream != nil && tty {
 		if err := setRawTerminal(streams); err != nil {
 			return err
@@ -300,9 +287,6 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 		go func() {
 			// When TTY is ON, use regular copy
 			if tty && outputStream != nil {
-				// var b bytes.Buffer
-				// io.Copy(&b, resp.Reader)
-				// pp.Println(b.String())
 				_, err = io.Copy(outputStream, resp.Reader)
 				// we should restore the terminal as soon as possible once connection end
 				// so any following print messages will be in normal type.
@@ -333,10 +317,9 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 			}
 			log.Debug("[hijack] End of stdin")
 		}
-
-		if err := resp.CloseWrite(); err != nil {
-			log.Debugf("Couldn't send EOF: %s", err)
-		}
+		// if err := resp.CloseWrite(); err != nil {
+		// 	log.Debugf("Couldn't send EOF: %s", err)
+		// }
 		close(stdinDone)
 	}()
 

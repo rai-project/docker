@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/k0kubun/pp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -49,9 +48,9 @@ func (suite *ExecTestSuite) TestRun() {
 	err := cont.Start()
 	assert.NoError(t, err)
 
-	// exec, err := NewExecution(cont, "/bin/sh", "-c", "ls", "-l", "/")
+	exec, err := NewExecution(cont, "/bin/sh", "-c", "ls", "-l", "/")
 
-	exec, err := NewExecution(cont, "/bin/sh", "-c", "echo", "cat")
+	// exec, err := NewExecution(cont, "/bin/sh", "-c", "echo", "cat")
 	assert.NoError(t, err)
 	assert.NotNil(t, exec)
 
@@ -61,11 +60,11 @@ func (suite *ExecTestSuite) TestRun() {
 
 	err = exec.Run()
 	assert.NoError(t, err, "execution should not return an error")
+
 	assert.Empty(t, stderr.Bytes())
 	assert.NotEmpty(t, stdout.Bytes())
 
-	pp.Println(stderr.String())
-	pp.Println(stdout.String())
+	assert.Equal(t, stdout.String(), "bin   dev  home  lib64\tmnt  proc  run\t srv  tmp  var\r\nboot  etc  lib\t media\topt  root  sbin  sys  usr\r\n")
 
 	// cont.Info()
 }
