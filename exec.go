@@ -142,9 +142,9 @@ func (e *Execution) Start() error {
 		AttachStdin:  e.Stdin != nil,
 		AttachStdout: true,
 		AttachStderr: true,
+		Detach:       false,
 		Tty:          isTty,
 		Cmd:          cmd,
-		Detach:       true,
 		User:         container.options.containerConfig.User,
 		Privileged:   container.options.hostConfig.Privileged,
 		Env:          container.options.containerConfig.Env,
@@ -158,38 +158,34 @@ func (e *Execution) Start() error {
 		return errors.Wrapf(err,
 			"cannot create execution %v in container", strings.Join(cmd, " "))
 	}
-	err = client.ContainerExecStart(
-		e.context,
-		execID.ID,
-		types.ExecStartCheck{
-			Detach: true,
-			Tty:    isTty,
-		},
-	)
-	if err != nil {
-		return errors.Wrapf(err,
-			"cannot start execution %v in container", strings.Join(cmd, " "))
-	}
+	e.execID = execID.ID
 
-	attachOpts := types.ContainerAttachOptions{
-		Stream: true,
-		Stdin:  e.Stdin != nil,
-		Stdout: true,
-		Stderr: true,
-	}
+	attachOpts := execOpts
 
-	resp, errAttach := client.ContainerAttach(
+	// err = client.ContainerExecStart(
+	// 	e.context,
+	// 	e.execID,
+	// 	types.ExecStartCheck{
+	// 		Detach: false,
+	// 		Tty:    isTty,
+	// 	},
+	// )
+	// if err != nil {
+	// 	return errors.Wrapf(err,
+	// 		"cannot start execution %v in container", strings.Join(cmd, " "))
+	// }
+
+	resp, errAttach := client.ContainerExecAttach(
 		e.context,
-		container.ID,
+		e.execID,
 		attachOpts,
 	)
-	if errAttach != nil && err != httputil.ErrPersistEOF {
+	if errAttach != nil && errAttach != httputil.ErrPersistEOF {
 		// ContainerAttach returns an ErrPersistEOF (connection closed)
 		// means server met an error and put it in Hijacked connection
 		// keep the error and read detailed error message from hijacked connection later
-		return errors.Wrap(err, "cannot attach to container")
+		return errors.Wrap(errAttach, "cannot attach to container")
 	}
-	defer resp.Close()
 
 	strm := &stream{
 		stdin:  e.Stdin,
@@ -197,10 +193,11 @@ func (e *Execution) Start() error {
 		stderr: e.Stderr,
 	}
 	cErr := promise.Go(func() error {
+		defer resp.Close()
 		errHijack := holdHijackedConnection(
 			e.context,
 			strm,
-			isTty,
+			attachOpts.Tty,
 			e.Stdin,
 			e.Stdout,
 			e.Stderr,
@@ -213,9 +210,10 @@ func (e *Execution) Start() error {
 	})
 
 	e.wc = cErr
+
 	e.isStarted = true
 
-	return nil
+	return err
 }
 func (e *Execution) StdinPipe() (io.WriteCloser, error) {
 	if e.Stdin != nil {
@@ -245,8 +243,9 @@ func (e *Execution) StdoutPipe() (io.ReadCloser, error) {
 	e.closeAfterWait = append(e.closeAfterWait, pw)
 	return pr, nil
 }
+
 func (e *Execution) Wait() error {
-	if e.isStarted == false {
+	if !e.isStarted {
 		return nil
 	}
 
@@ -301,6 +300,9 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 		go func() {
 			// When TTY is ON, use regular copy
 			if tty && outputStream != nil {
+				// var b bytes.Buffer
+				// io.Copy(&b, resp.Reader)
+				// pp.Println(b.String())
 				_, err = io.Copy(outputStream, resp.Reader)
 				// we should restore the terminal as soon as possible once connection end
 				// so any following print messages will be in normal type.
@@ -342,7 +344,7 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 	case err := <-receiveStdout:
 		if err != nil {
 			log.Debugf("Error receiveStdout: %s", err)
-			return err
+			return errors.Wrap(err, "while hijacking stdout")
 		}
 	case <-stdinDone:
 		if outputStream != nil || errorStream != nil {
@@ -350,7 +352,7 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 			case err := <-receiveStdout:
 				if err != nil {
 					log.Debugf("Error receiveStdout: %s", err)
-					return err
+					return errors.Wrap(err, "stdin done while hijacking stdout")
 				}
 			case <-ctx.Done():
 			}

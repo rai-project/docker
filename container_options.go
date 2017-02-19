@@ -61,17 +61,21 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		Shell: []string{
 			"/bin/bash",
 		},
+		Cmd: []string{
+			"sleep",
+			"4h",
+		},
 		User:            Config.Username,
-		AttachStdin:     false,
+		AttachStdin:     c.options.stdin != nil,
 		AttachStdout:    true,
 		AttachStderr:    true,
 		OpenStdin:       true,
-		StdinOnce:       true,
+		StdinOnce:       false,
 		Tty:             true,
 		NetworkDisabled: true,
 	}
 	hostConfig := &container.HostConfig{
-		Privileged:      false,
+		Privileged:      true,
 		AutoRemove:      false,
 		PublishAllPorts: false,
 		ReadonlyRootfs:  false,

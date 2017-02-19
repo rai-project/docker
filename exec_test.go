@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/k0kubun/pp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -48,7 +49,9 @@ func (suite *ExecTestSuite) TestRun() {
 	err := cont.Start()
 	assert.NoError(t, err)
 
-	exec, err := NewExecution(cont, "ls", "-l")
+	// exec, err := NewExecution(cont, "/bin/sh", "-c", "ls", "-l", "/")
+
+	exec, err := NewExecution(cont, "/bin/sh", "-c", "echo", "cat")
 	assert.NoError(t, err)
 	assert.NotNil(t, exec)
 
@@ -60,6 +63,11 @@ func (suite *ExecTestSuite) TestRun() {
 	assert.NoError(t, err, "execution should not return an error")
 	assert.Empty(t, stderr.Bytes())
 	assert.NotEmpty(t, stdout.Bytes())
+
+	pp.Println(stderr.String())
+	pp.Println(stdout.String())
+
+	// cont.Info()
 }
 
 /*

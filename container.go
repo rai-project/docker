@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types"
+	"github.com/k0kubun/pp"
 )
 
 type Container struct {
@@ -62,6 +63,19 @@ func (c *Container) Start() error {
 	return nil
 }
 
+func (c *Container) Info() (types.ContainerJSON, error) {
+	client := c.client
+	info, err := client.ContainerInspect(
+		c.options.context,
+		c.ID,
+	)
+	if err != nil {
+		return types.ContainerJSON{}, err
+	}
+	pp.Println(info)
+	return info, nil
+}
+
 func (c *Container) Stop() error {
 	defer c.options.cancelFunc()
 	if !c.isStarted {
@@ -88,9 +102,9 @@ func (c *Container) remove() error {
 		c.options.context,
 		c.ID,
 		types.ContainerRemoveOptions{
-			RemoveVolumes: true,
-			RemoveLinks:   true,
-			Force:         true,
+			// RemoveVolumes: true,
+			// RemoveLinks:   true,
+			Force: true,
 		},
 	)
 	return err

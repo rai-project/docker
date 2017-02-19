@@ -14,11 +14,11 @@ import (
 type dockerConfig struct {
 	TimeLimit         time.Duration     `json:"time_limit" config:"docker.time_limit" default:"1h"`
 	Image             string            `json:"image" config:"docker.image" default:"ubuntu"`
-	Username          string            `json:"username" config:"docker.username"`
-	MemoryLimitString string            `json:"memory_limit" config:"docker.memory_limit"`
+	Username          string            `json:"username" config:"docker.username" default:"root"`
+	MemoryLimitString string            `json:"memory_limit" config:"docker.memory_limit" default:"4gb"`
 	MemoryLimit       int64             `json:"-" config:"-"`
 	Env               map[string]string `json:"env" config:"docker.env"`
-	Host              string            `json:"host" config:"docker.host" default:"unix:///var/run/docker.sock" env:"DOCKER_HOST"`
+	Host              string            `json:"host" config:"docker.host" default:"default" env:"DOCKER_HOST"`
 	APIVersion        string            `json:"api_version" config:"docker.api_version" default:"default" env:"DOCKER_API_VERSION"`
 	CertPath          string            `json:"cert_path" config:"docker.cert_path" default:"" env:"DOCKER_CERT_PATH"`
 	TLSVerify         bool              `json:"tls_verify" config:"docker.tls_verify" default:"false" env:"DOCKER_TLS_VERIFY"`
@@ -43,6 +43,9 @@ func (a *dockerConfig) Read() {
 		} else if bts, err := strconv.ParseInt(a.MemoryLimitString, 10, 0); err == nil {
 			a.MemoryLimit = bts
 		}
+	}
+	if a.Host == "" || a.Host == "default" {
+		a.Host = client.DefaultDockerHost
 	}
 	if a.APIVersion == "" || a.APIVersion == "default" {
 		a.APIVersion = client.DefaultVersion
