@@ -2,59 +2,50 @@ package docker
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"testing"
 
-	sourcepath "github.com/GeertJohan/go-sourcepath"
-	"github.com/rai-project/config"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-var testYamlPath = "config_test.yml"
-var testYaml = `docker:
-    repository: "ubuntu"
-    tag: "latest"
-    user: ""
-`
-
-func TestMain(m *testing.M) {
-	// flag.Parse()
-	bytes := []byte(testYaml)
-	err := ioutil.WriteFile(testYamlPath, bytes, 0777)
-
-	if err != nil {
-		panic("cannot create temp yaml config file needed for testing")
-	}
-	defer os.Remove(testYamlPath)
-
-	config.ConfigFileName = filepath.Join(sourcepath.MustAbsoluteDir(), testYamlPath)
-	config.Init()
-
-	os.Exit(m.Run())
+type ExecTestSuite struct {
+	suite.Suite
+	client    *Client
+	container *Container
 }
 
-func TestExecution(t *testing.T) {
-
-	client, err := NewClient()
+func NewExecTestSuite(t *testing.T) (*ExecTestSuite, error) {
+	client, err := NewClient(
+		Stdout(os.Stdout),
+		Stderr(os.Stderr),
+	)
 	assert.NoError(t, err)
-	assert.NotNil(t, client)
-
-	err = client.PullImage(Config.Repository, Config.Tag)
-	assert.NoError(t, err)
+	if err != nil {
+		return nil, err
+	}
 
 	cont, err := NewContainer(client)
 	assert.NoError(t, err)
-	assert.NotNil(t, cont)
+	if err != nil {
+		return nil, err
+	}
+	return &ExecTestSuite{
+		client:    client,
+		container: cont,
+	}, nil
+}
+
+func (suite *ExecTestSuite) TestRun() {
+	t := suite.T()
+	cont := suite.container
 
 	defer func() {
 		err := cont.Stop()
 		assert.NoError(t, err)
 	}()
 
-	err = cont.Start()
+	err := cont.Start()
 	assert.NoError(t, err)
 
 	exec, err := NewExecution(cont, "ls", "-l")
@@ -71,6 +62,7 @@ func TestExecution(t *testing.T) {
 	assert.NotEmpty(t, stdout.Bytes())
 }
 
+/*
 func TestExecutionOutput(t *testing.T) {
 
 	config.Init()
@@ -135,4 +127,13 @@ func TestExecutionOutput2(t *testing.T) {
 	run("ls -l")
 	run("ls -l /")
 
+}
+*/
+
+func TestExec(t *testing.T) {
+	c, err := NewExecTestSuite(t)
+	if !assert.NoError(t, err, "Failed to create docker client") {
+		return
+	}
+	suite.Run(t, c)
 }

@@ -18,6 +18,12 @@ func NewContainer(client *Client, paramOpts ...ContainerOption) (*Container, err
 	for _, o := range paramOpts {
 		o(options)
 	}
+	if !client.HasImage(options.containerConfig.Image) {
+		err := client.PullImage(options.containerConfig.Image)
+		if err != nil {
+			return nil, err
+		}
+	}
 	c, err := client.ContainerCreate(
 		options.context,
 		options.containerConfig,
@@ -44,8 +50,14 @@ func NewContainer(client *Client, paramOpts ...ContainerOption) (*Container, err
 
 func (c *Container) Start() error {
 	client := c.client
-	_ = client
-	panic("todo")
+	err := client.ContainerStart(
+		c.options.context,
+		c.ID,
+		types.ContainerStartOptions{},
+	)
+	if err != nil {
+		return err
+	}
 	c.isStarted = true
 	return nil
 }

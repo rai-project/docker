@@ -70,7 +70,7 @@ func (suite *ClientTestSuite) TestListImages() {
 	assert.NotEmpty(suite.T(), imgs)
 }
 
-func TestClient(t *testing.T) {
+func XXTestClient(t *testing.T) {
 	c, err := NewClientTestSuite(t)
 	if !assert.NoError(t, err, "Failed to create docker client") {
 		return

@@ -13,6 +13,6 @@ var (
 
 func init() {
 	config.OnInit(func() {
-		log = logger.WithField("pkg", "docker")
+		log = logger.New().WithField("pkg", "docker")
 	})
 }

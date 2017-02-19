@@ -58,6 +58,17 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		Hostname: fmt.Sprintf("%s-run-%s", config.App.Name, uuid.NewV4()),
 		Env:      getEnv(),
 		Image:    Config.Image,
+		Shell: []string{
+			"/bin/bash",
+		},
+		User:            Config.Username,
+		AttachStdin:     false,
+		AttachStdout:    true,
+		AttachStderr:    true,
+		OpenStdin:       true,
+		StdinOnce:       true,
+		Tty:             true,
+		NetworkDisabled: true,
 	}
 	hostConfig := &container.HostConfig{
 		Privileged:      false,

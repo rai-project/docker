@@ -30,7 +30,7 @@ func NewClientOptions() *ClientOptions {
 		apiVersion: Config.APIVersion,
 		stderr:     command.NewOutStream(ioutil.Discard),
 		stdout:     command.NewOutStream(ioutil.Discard),
-		stdin:      nil,
+		stdin:      command.NewInStream(empty),
 		context:    context.Background(),
 	}
 	if com.IsDir(Config.CertPath) {
