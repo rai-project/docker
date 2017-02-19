@@ -9,8 +9,7 @@ The docker section of the configuration file should be written according to [con
 
 docker:
   - time_limit: 1h
-  - image_repository: webgpu/rai 
-  - image_tag: root
+  - image: ubuntu
   - memory_limit: 4gb
   - endpoints:
     - /run/docker.sock
