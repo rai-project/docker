@@ -45,10 +45,10 @@ type VolumeMap map[string]*Volume
 
 var Volumes = []VolumeInfo{
 	{
-		"nvidia_driver",
-		"/usr/local/nvidia",
-		"ro",
-		components{
+		Name:         "nvidia_driver",
+		Mountpoint:   "/usr/local/nvidia",
+		MountOptions: "ro",
+		Components: components{
 			"binaries": {
 				//"nvidia-modprobe",       // Kernel module loader
 				//"nvidia-settings",       // X server settings

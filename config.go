@@ -1,28 +1,26 @@
 package docker
 
 import (
-	"strings"
-
+	"strconv"
 	"time"
 
+	humanize "github.com/dustin/go-humanize"
 	"github.com/k0kubun/pp"
 	"github.com/rai-project/config"
-	"github.com/rai-project/serializer"
-	"github.com/rai-project/serializer/bson"
-	"github.com/rai-project/serializer/json"
 	"github.com/rai-project/vipertags"
 )
 
 type dockerConfig struct {
-	Serializer     serializer.Serializer `json:"-" config:"-"`
-	SerializerName string                `json:"serializer_name" config:"docker.serializer" default:"json"`
-	TimeLimit      time.Duration         `json:"time_limit" config:"docker.time_limit" default:"1h"`
-	Repository     string                `json:"repository" config:"docker.repository"`
-	Tag            string                `json:"tag" config:"docker.tag" default:"latest"`
-	User           string                `json:"user" config:"docker.user"`
-	RaiUserName    string                `json:"user_name" config:"docker.rai_user_name"`
-	MemoryLimit    int64                 `json:"memory_limit" config:"docker.memory_limit"`
-	Endpoints      []string              `json:"endpoints" config:"docker.endpoints" default:"/run/docker.sock /var/run/docker.sock"`
+	TimeLimit         time.Duration `json:"time_limit" config:"docker.time_limit" default:"1h"`
+	ImageRepository   string        `json:"repository" config:"docker.image_repository"`
+	ImageTag          string        `json:"tag" config:"docker.image_tag" default:"latest"`
+	Username          string        `json:"username" config:"docker.username"`
+	MemoryLimitString string        `json:"memory_limit" config:"docker.memory_limit"`
+	MemoryLimit       uint64        `json:"-" config:"docker.-"`
+	Host              string        `json:"host" config:"docker.host" default:"unix:///var/run/docker.sock" env:"DOCKER_HOST"`
+	APIVersion        string        `json:"api_version" config:"docker.api_version" default:"" env:"DOCKER_API_VERSION"`
+	CertPath          string        `json:"cert_path" config:"docker.cert_path" default:"" env:"DOCKER_CERT_PATH"`
+	TLSVerify         bool          `json:"tls_verify" config:"docker.tls_verify" default:"false" env:"DOCKER_TLS_VERIFY"`
 }
 
 var (
@@ -38,14 +36,12 @@ func (dockerConfig) SetDefaults() {
 
 func (a *dockerConfig) Read() {
 	vipertags.Fill(a)
-	switch strings.ToLower(a.SerializerName) {
-	case "json":
-		a.Serializer = json.New()
-	case "bson":
-		a.Serializer = bson.New()
-	default:
-		log.WithField("serializer", a.SerializerName).
-			Warn("Cannot find serializer")
+	if a.MemoryLimitString != "" {
+		if bts, err := humanize.ParseBytes(a.MemoryLimitString); err == nil {
+			a.MemoryLimit = bts
+		} else if bts, err := strconv.Atoi(a.MemoryLimitString); err == nil {
+			a.MemoryLimit = uint64(bts)
+		}
 	}
 }
 

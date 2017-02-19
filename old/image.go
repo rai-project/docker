@@ -51,7 +51,7 @@ func (c *Client) GetImage(image, tag string) error {
 	if err != nil {
 		return err
 	}
-	if len(imgs) == 0 {
+	if len(imgs) == 0 || tag == "lastest" {
 		return c.PullImage(image, tag)
 	}
 	return nil

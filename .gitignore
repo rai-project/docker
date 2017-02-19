@@ -29,7 +29,6 @@ _testmain.go
 .srclib-store/
 node_modules/
 vendor/
-.vscode
 *.pb.go
 .env
 nsqd.*.dat
@@ -39,3 +38,4 @@ dist/
 cmd/rai/rai
 cmd/raid/raid
 debug
+.DS_Store
