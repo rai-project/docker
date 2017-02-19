@@ -11,8 +11,7 @@ import (
 
 type ExecTestSuite struct {
 	suite.Suite
-	client    *Client
-	container *Container
+	client *Client
 }
 
 func NewExecTestSuite(t *testing.T) (*ExecTestSuite, error) {
@@ -25,32 +24,31 @@ func NewExecTestSuite(t *testing.T) (*ExecTestSuite, error) {
 		return nil, err
 	}
 
-	cont, err := NewContainer(client)
-	assert.NoError(t, err)
-	if err != nil {
-		return nil, err
-	}
 	return &ExecTestSuite{
-		client:    client,
-		container: cont,
+		client: client,
 	}, nil
 }
 
 func (suite *ExecTestSuite) TestRun() {
 	t := suite.T()
-	cont := suite.container
+	client := suite.client
+
+	cont, err := NewContainer(client)
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
 
 	defer func() {
 		err := cont.Stop()
 		assert.NoError(t, err)
 	}()
 
-	err := cont.Start()
+	err = cont.Start()
 	assert.NoError(t, err)
 
 	exec, err := NewExecution(cont, "/bin/sh", "-c", "ls", "-l", "/")
 
-	// exec, err := NewExecution(cont, "/bin/sh", "-c", "echo", "cat")
 	assert.NoError(t, err)
 	assert.NotNil(t, exec)
 
@@ -66,21 +64,17 @@ func (suite *ExecTestSuite) TestRun() {
 
 	assert.Equal(t, stdout.String(), "bin   dev  home  lib64\tmnt  proc  run\t srv  tmp  var\r\nboot  etc  lib\t media\topt  root  sbin  sys  usr\r\n")
 
-	// cont.Info()
 }
 
-/*
-func TestExecutionOutput(t *testing.T) {
-
-	config.Init()
-
-	client, err := NewClient()
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+func (suite *ExecTestSuite) TestExecutionOutput() {
+	t := suite.T()
+	client := suite.client
 
 	cont, err := NewContainer(client)
 	assert.NoError(t, err)
-	assert.NotNil(t, cont)
+	if err != nil {
+		return
+	}
 
 	defer func() {
 		err := cont.Stop()
@@ -100,6 +94,7 @@ func TestExecutionOutput(t *testing.T) {
 
 }
 
+/*
 func TestExecutionOutput2(t *testing.T) {
 
 	config.Init()
