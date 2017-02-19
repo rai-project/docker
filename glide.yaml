@@ -1,0 +1,49 @@
+package: github.com/rai-project/docker
+import:
+- package: github.com/Sirupsen/logrus
+  version: ~0.11.2
+- package: github.com/Unknwon/com
+  version: ~1.0.0
+- package: github.com/cenkalti/backoff
+  version: ~1.0.0
+- package: github.com/docker/distribution
+  version: ~2.6.0
+  subpackages:
+  - reference
+- package: github.com/docker/docker
+  version: ~1.13.1
+  subpackages:
+  - api/types
+  - api/types/container
+  - api/types/filters
+  - api/types/network
+  - cli/command
+  - client
+  - pkg/jsonmessage
+  - pkg/promise
+  - pkg/stdcopy
+- package: github.com/docker/go-connections
+  version: ~0.2.1
+  subpackages:
+  - tlsconfig
+- package: github.com/dustin/go-humanize
+- package: github.com/imdario/mergo
+  version: ~0.2.2
+- package: github.com/junegunn/go-shellwords
+- package: github.com/k0kubun/pp
+  version: ~2.3.0
+- package: github.com/pkg/errors
+  version: ~0.8.0
+- package: github.com/rai-project/config
+- package: github.com/rai-project/cudainfo
+- package: github.com/rai-project/ldcache
+- package: github.com/rai-project/logger
+- package: github.com/rai-project/vipertags
+- package: github.com/satori/go.uuid
+  version: ~1.1.0
+testImport:
+- package: github.com/stretchr/testify
+  version: ~1.1.4
+  subpackages:
+  - assert
+  - suite

@@ -6,7 +6,7 @@ The docker section of the configuration file should be written according to [con
 
 ## Config
 
-
+~~~
 docker:
   - time_limit: 1h
   - image: ubuntu
@@ -27,3 +27,4 @@ docker:
     BUILD_DIR: /build 
     PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 		TERM: xterm
+~~~
