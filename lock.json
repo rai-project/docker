@@ -1,5 +1,5 @@
 {
-    "memo": "793a41b7993fe2f6cd4ce5ecacf1828819c4354880aa4269d92024c2c4ac3d82",
+    "memo": "c4c6c3a88a45cf3c2ae0bfb9eb19ecabf5514197b9783de68f5f4921f859cfe5",
     "projects": [
         {
             "name": "github.com/Azure/go-ansiterm",
@@ -73,7 +73,7 @@
         {
             "name": "github.com/davecgh/go-spew",
             "version": "v1.1.0",
-            "revision": "346938d642f2ec3594ed81d874461961cd0faa76",
+            "revision": "a7a0063072ed89d04285d3d3362aa590ed9f7878",
             "packages": [
                 "spew"
             ]
@@ -98,6 +98,7 @@
                 "api/types",
                 "api/types/container",
                 "api/types/filters",
+                "api/types/mount",
                 "api/types/network",
                 "cli/command",
                 "client",
@@ -108,8 +109,8 @@
         },
         {
             "name": "github.com/docker/docker-credential-helpers",
-            "version": "v0.4.0",
-            "revision": "2514d5e8b22ef1a8e6eb7189a75d9683970a40bf",
+            "version": "v0.4.1",
+            "revision": "b7c53e02cd1a9a01500a58f22d83c6e964bc59db",
             "packages": [
                 "client",
                 "credentials"
@@ -183,8 +184,8 @@
         },
         {
             "name": "github.com/go-ini/ini",
-            "version": "v1.24.0",
-            "revision": "e3c2d47c61e5333f9aa2974695dd94396eb69c75",
+            "version": "v1.25.2",
+            "revision": "74bdc99692c3408cb103221e38675ce8fda0a718",
             "packages": [
                 "."
             ]
@@ -192,7 +193,7 @@
         {
             "name": "github.com/gorilla/context",
             "version": "v1.1",
-            "revision": "1ea25387ff6f684839d82767c1733ff4d4d15d0a",
+            "revision": "a85d2e53ba63bdea074dbbbb5983f0516974e87b",
             "packages": [
                 "."
             ]
@@ -279,8 +280,8 @@
         },
         {
             "name": "github.com/mattn/go-shellwords",
-            "version": "v1.0.1",
-            "revision": "753a2322a99f87c0eff284980e77f53041555bc6",
+            "version": "v1.0.2",
+            "revision": "005a0944d84452842197c2108bd9168ced206f78",
             "packages": [
                 "."
             ]
@@ -392,7 +393,7 @@
         {
             "name": "github.com/rai-project/vipertags",
             "branch": "master",
-            "revision": "e1915c4cead0b5c37a11c59a1306e3cdff12454c",
+            "revision": "997637b503048b1f8d2a1126ff497db620632608",
             "packages": [
                 "."
             ]

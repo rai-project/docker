@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/imdario/mergo"
 	"github.com/rai-project/config"
@@ -76,6 +77,7 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		StdinOnce:       false,
 		Tty:             true,
 		NetworkDisabled: true,
+		StopSignal:      "SIGKILL",
 	}
 	hostConfig := &container.HostConfig{
 		Privileged:      true,
@@ -113,6 +115,24 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		parentCtx:       c.options.context,
 		context:         ctx,
 		cancelFunc:      cancelFunc,
+	}
+}
+
+func User(u string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.User = u
+	}
+}
+
+func Shell(s []string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Shell = s
+	}
+}
+
+func Cmd(s []string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Cmd = s
 	}
 }
 
@@ -214,5 +234,28 @@ func Devices(ds []container.DeviceMapping) ContainerOption {
 		for _, d := range ds {
 			add(d)
 		}
+	}
+}
+
+func NvidiaDocker(version string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.hostConfig.VolumeDriver = "nvidia-docker"
+		o.hostConfig.Mounts = append(
+			o.hostConfig.Mounts,
+			mount.Mount{
+				Type:     mount.TypeVolume,
+				Source:   "/var/lib/nvidia-docker/volumes/nvidia_driver/" + version,
+				Target:   "/usr/local/nvidia",
+				ReadOnly: false,
+				VolumeOptions: &mount.VolumeOptions{
+					Labels: map[string]string{
+						"name": "nvidia_driver_" + version,
+					},
+					DriverConfig: &mount.Driver{
+						Name: "nvidia_driver_" + version,
+					},
+				},
+			},
+		)
 	}
 }

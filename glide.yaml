@@ -11,11 +11,12 @@ import:
   subpackages:
   - reference
 - package: github.com/docker/docker
-  version: ~1.13.1
+  version: ~17.3.0-ce-rc1
   subpackages:
   - api/types
   - api/types/container
   - api/types/filters
+  - api/types/mount
   - api/types/network
   - cli/command
   - client
