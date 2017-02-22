@@ -26,5 +26,6 @@ docker:
     DATA_DIR: /data 
     BUILD_DIR: /build 
     PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-		TERM: xterm
+    TERM: xterm
+
 ~~~
