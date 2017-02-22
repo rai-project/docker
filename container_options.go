@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/imdario/mergo"
 	"github.com/rai-project/config"
+	"github.com/rai-project/docker/cuda"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -18,6 +20,7 @@ type ContainerOptions struct {
 	containerConfig *container.Config
 	hostConfig      *container.HostConfig
 	networkConfig   *network.NetworkingConfig
+	parentCtx       context.Context
 	context         context.Context
 	cancelFunc      context.CancelFunc
 }
@@ -107,8 +110,35 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		containerConfig: containerConfig,
 		hostConfig:      hostConfig,
 		networkConfig:   networkConfig,
+		parentCtx:       c.options.context,
 		context:         ctx,
 		cancelFunc:      cancelFunc,
+	}
+}
+
+func Timelimit(t time.Duration) ContainerOption {
+	return func(o *ContainerOptions) {
+		ctx, cancelFunc := context.WithTimeout(o.parentCtx, t)
+		o.context = ctx
+		o.cancelFunc = cancelFunc
+	}
+}
+
+func ContainerConfig(h container.Config) ContainerOption {
+	return func(o *ContainerOptions) {
+		*o.containerConfig = h
+	}
+}
+
+func HostConfig(h container.HostConfig) ContainerOption {
+	return func(o *ContainerOptions) {
+		*o.hostConfig = h
+	}
+}
+
+func NetworkConfig(h network.NetworkingConfig) ContainerOption {
+	return func(o *ContainerOptions) {
+		*o.networkConfig = h
 	}
 }
 
@@ -124,8 +154,65 @@ func WorkingDirectory(dir string) ContainerOption {
 	}
 }
 
-func CUDAVolume() ContainerOption {
+func Memory(n int64) ContainerOption {
 	return func(o *ContainerOptions) {
-		//...
+		o.hostConfig.Resources.Memory = n
+	}
+}
+
+func CUDADevice(n int) ContainerOption {
+	dev := fmt.Sprintf("/dev/nvidia%d", n)
+	return Devices([]container.DeviceMapping{
+		container.DeviceMapping{
+			PathInContainer:   cuda.DeviceCtl,
+			PathOnHost:        cuda.DeviceCtl,
+			CgroupPermissions: "rwm",
+		},
+		container.DeviceMapping{
+			PathInContainer:   cuda.DeviceUVM,
+			PathOnHost:        cuda.DeviceUVM,
+			CgroupPermissions: "rwm",
+		},
+		container.DeviceMapping{
+			PathInContainer:   cuda.DeviceUVMTools,
+			PathOnHost:        cuda.DeviceUVMTools,
+			CgroupPermissions: "rwm",
+		},
+		container.DeviceMapping{
+			PathInContainer:   dev,
+			PathOnHost:        dev,
+			CgroupPermissions: "rwm",
+		},
+	})
+}
+
+func ReadonlyRootfs(b bool) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.hostConfig.ReadonlyRootfs = b
+	}
+}
+
+func Device(d container.DeviceMapping) ContainerOption {
+	return Devices([]container.DeviceMapping{d})
+}
+
+func Devices(ds []container.DeviceMapping) ContainerOption {
+	return func(o *ContainerOptions) {
+		add := func(d container.DeviceMapping) {
+			for _, e := range o.hostConfig.Resources.Devices {
+				if e.PathInContainer == d.PathInContainer &&
+					e.PathOnHost == d.PathOnHost &&
+					e.CgroupPermissions == d.CgroupPermissions {
+					return
+				}
+			}
+			o.hostConfig.Resources.Devices = append(
+				o.hostConfig.Resources.Devices,
+				d,
+			)
+		}
+		for _, d := range ds {
+			add(d)
+		}
 	}
 }
