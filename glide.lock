@@ -1,5 +1,5 @@
 hash: b1508176770737625d421c16b53d6ca17378bbcd80f2365d727bdbe8c62aeef3
-updated: 2017-02-22T18:31:04.992188441-06:00
+updated: 2017-02-22T18:34:32.34106589-06:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: fa152c58bc15761d0200cb75fe958b89a9d4888e
@@ -168,7 +168,7 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/rai-project/config
-  version: 6c3f625b8d8fe37eb9f082600745bcd9c64a80ee
+  version: 011efcd9cdd5fe1d995773919da5a07e020d37c3
 - name: github.com/rai-project/cudainfo
   version: 9f96f70121b6ee72ee8083e9ba6e93b6c1998c50
 - name: github.com/rai-project/godotenv
@@ -176,7 +176,7 @@ imports:
 - name: github.com/rai-project/ldcache
   version: a38d663b57a515be159dcd4daef6d9ed98d0e6a4
 - name: github.com/rai-project/logger
-  version: 5bf48710226f520f0df1f3a367319b7d8c7298fd
+  version: 603c4893a5f11e787f6e9ee1b8f59cbc45a4a631
 - name: github.com/rai-project/vipertags
   version: 997637b503048b1f8d2a1126ff497db620632608
 - name: github.com/satori/go.uuid
