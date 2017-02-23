@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/docker/docker/api"
 	"github.com/docker/docker/client"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/k0kubun/pp"
@@ -48,7 +49,7 @@ func (a *dockerConfig) Read() {
 		a.Host = client.DefaultDockerHost
 	}
 	if a.APIVersion == "" || a.APIVersion == "default" {
-		a.APIVersion = client.DefaultVersion
+		a.APIVersion = api.DefaultVersion
 	}
 }
 
