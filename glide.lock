@@ -1,5 +1,5 @@
 hash: b1508176770737625d421c16b53d6ca17378bbcd80f2365d727bdbe8c62aeef3
-updated: 2017-02-22T18:27:58.076175938-06:00
+updated: 2017-02-22T18:31:04.992188441-06:00
 imports:
 - name: github.com/Azure/go-ansiterm
   version: fa152c58bc15761d0200cb75fe958b89a9d4888e
@@ -168,7 +168,7 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/rai-project/config
-  version: 0e314b8ace535477c437c3dd3ac5c0bf23f55eb9
+  version: 6c3f625b8d8fe37eb9f082600745bcd9c64a80ee
 - name: github.com/rai-project/cudainfo
   version: 9f96f70121b6ee72ee8083e9ba6e93b6c1998c50
 - name: github.com/rai-project/godotenv
