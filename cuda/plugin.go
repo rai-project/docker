@@ -2,10 +2,8 @@ package cuda
 
 import (
 	"fmt"
-	"os/user"
 	"path"
 	"regexp"
-	"strconv"
 
 	"github.com/docker/go-plugins-helpers/volume"
 	"github.com/pkg/errors"
@@ -172,7 +170,5 @@ func (CUDADriver) Capabilities(req volume.Request) volume.Response {
 func Serve() {
 	d := CUDADriver{}
 	h := volume.NewHandler(d)
-	u, _ := user.Lookup("ubuntu")
-	gid, _ := strconv.Atoi(u.Gid)
-	h.ServeUnix("cuda_plugin", gid)
+	h.ServeTCP("cuda_plugin", "localhost", nil)
 }
