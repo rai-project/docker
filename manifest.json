@@ -6,6 +6,9 @@
         "github.com/Unknwon/com": {
             "branch": "master"
         },
+        "github.com/carlescere/scheduler": {
+            "branch": "master"
+        },
         "github.com/cenkalti/backoff": {
             "branch": "master"
         },
@@ -16,6 +19,9 @@
             "branch": "master"
         },
         "github.com/docker/go-connections": {
+            "branch": "master"
+        },
+        "github.com/docker/go-plugins-helpers": {
             "branch": "master"
         },
         "github.com/dustin/go-humanize": {
@@ -36,13 +42,13 @@
         "github.com/rai-project/config": {
             "branch": "master"
         },
-        "github.com/rai-project/cudainfo": {
-            "branch": "master"
-        },
         "github.com/rai-project/ldcache": {
             "branch": "master"
         },
         "github.com/rai-project/logger": {
+            "branch": "master"
+        },
+        "github.com/rai-project/nvidia-smi": {
             "branch": "master"
         },
         "github.com/rai-project/vipertags": {

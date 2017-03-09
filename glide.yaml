@@ -4,6 +4,8 @@ import:
   version: ~0.11.4
 - package: github.com/Unknwon/com
   version: ~1.0.0
+- package: github.com/carlescere/scheduler
+  version: ~0.1.0
 - package: github.com/cenkalti/backoff
   version: ~1.0.0
 - package: github.com/docker/distribution
@@ -13,6 +15,7 @@ import:
 - package: github.com/docker/docker
   version: ~17.3.0-ce-rc1
   subpackages:
+  - api
   - api/types
   - api/types/container
   - api/types/filters
@@ -27,6 +30,9 @@ import:
   version: ~0.2.1
   subpackages:
   - tlsconfig
+- package: github.com/docker/go-plugins-helpers
+  subpackages:
+  - volume
 - package: github.com/dustin/go-humanize
 - package: github.com/imdario/mergo
   version: ~0.2.2
@@ -36,14 +42,12 @@ import:
 - package: github.com/pkg/errors
   version: ~0.8.0
 - package: github.com/rai-project/config
-- package: github.com/rai-project/cudainfo
 - package: github.com/rai-project/ldcache
 - package: github.com/rai-project/logger
+- package: github.com/rai-project/nvidia-smi
 - package: github.com/rai-project/vipertags
 - package: github.com/satori/go.uuid
   version: ~1.1.0
-- package: github.com/carlescere/scheduler
-  version: ~0.1.0
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.1.4

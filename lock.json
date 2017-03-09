@@ -1,5 +1,5 @@
 {
-    "memo": "c4c6c3a88a45cf3c2ae0bfb9eb19ecabf5514197b9783de68f5f4921f859cfe5",
+    "memo": "b56bd7d8c67a5f905793183241771245a4549bbd9a69bcd552613f039220322f",
     "projects": [
         {
             "name": "github.com/Azure/go-ansiterm",
@@ -37,7 +37,7 @@
         {
             "name": "github.com/Sirupsen/logrus",
             "branch": "master",
-            "revision": "7f4b1adc791766938c29457bed0703fb9134421a",
+            "revision": "0208149b40d863d2c1a2f8fe5753096a9cf2cc8b",
             "packages": [
                 ".",
                 "hooks/syslog"
@@ -52,14 +52,11 @@
             ]
         },
         {
-            "name": "github.com/aws/aws-sdk-go",
+            "name": "github.com/carlescere/scheduler",
             "branch": "master",
-            "revision": "2d3b3bc3aae6a09a9b194aa6eb71326fcbe2e918",
+            "revision": "ee74d2f83d82cd1d2e92ed3ec3dbaf162ca5ece5",
             "packages": [
-                "aws",
-                "aws/credentials",
-                "aws/session",
-                "service/kinesis"
+                "."
             ]
         },
         {
@@ -68,6 +65,14 @@
             "revision": "b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3",
             "packages": [
                 "."
+            ]
+        },
+        {
+            "name": "github.com/coreos/go-systemd",
+            "branch": "master",
+            "revision": "e97b35f834b17eaa82afe3d44715c34736bfa12b",
+            "packages": [
+                "activation"
             ]
         },
         {
@@ -81,35 +86,75 @@
         {
             "name": "github.com/docker/distribution",
             "branch": "master",
-            "revision": "df5327f76fb6468b84a87771e361762b8be23fdb",
+            "revision": "50133d63723f8fa376e632a853739990a133be16",
             "packages": [
+                ".",
+                "context",
+                "digestset",
                 "reference",
                 "registry/api/errcode",
+                "registry/api/v2",
+                "registry/client",
                 "registry/client/auth",
                 "registry/client/auth/challenge",
-                "registry/client/transport"
+                "registry/client/transport",
+                "registry/storage/cache",
+                "registry/storage/cache/memory",
+                "uuid"
             ]
         },
         {
             "name": "github.com/docker/docker",
             "branch": "master",
-            "revision": "40532143c2c4cf1359fd8484789b81c1f1f59d98",
+            "revision": "7fb83eb7629856756e3ed7b1f20cedc87584354b",
             "packages": [
+                "api",
                 "api/types",
+                "api/types/blkiodev",
                 "api/types/container",
+                "api/types/events",
                 "api/types/filters",
+                "api/types/image",
                 "api/types/mount",
                 "api/types/network",
+                "api/types/registry",
+                "api/types/strslice",
+                "api/types/swarm",
+                "api/types/time",
+                "api/types/versions",
+                "api/types/volume",
                 "cli/command",
+                "cli/config",
+                "cli/config/configfile",
+                "cli/config/credentials",
+                "cli/flags",
                 "client",
+                "dockerversion",
+                "opts",
+                "pkg/homedir",
+                "pkg/httputils",
+                "pkg/idtools",
+                "pkg/ioutils",
+                "pkg/jsonlog",
                 "pkg/jsonmessage",
+                "pkg/longpath",
+                "pkg/parsers/kernel",
                 "pkg/promise",
-                "pkg/stdcopy"
+                "pkg/random",
+                "pkg/stdcopy",
+                "pkg/stringid",
+                "pkg/system",
+                "pkg/tarsum",
+                "pkg/term",
+                "pkg/term/windows",
+                "pkg/tlsconfig",
+                "pkg/useragent",
+                "registry"
             ]
         },
         {
             "name": "github.com/docker/docker-credential-helpers",
-            "version": "v0.4.1",
+            "branch": "master",
             "revision": "b7c53e02cd1a9a01500a58f22d83c6e964bc59db",
             "packages": [
                 "client",
@@ -119,11 +164,20 @@
         {
             "name": "github.com/docker/go-connections",
             "branch": "master",
-            "revision": "7da10c8c50cad14494ec818dcdfb6506265c0086",
+            "revision": "1b14b2d192e2f91cdc2bc6bf9aee0b0e116eed42",
             "packages": [
                 "nat",
                 "sockets",
                 "tlsconfig"
+            ]
+        },
+        {
+            "name": "github.com/docker/go-plugins-helpers",
+            "branch": "master",
+            "revision": "8af45ff6ad5b7608853de51133c33e6638b02134",
+            "packages": [
+                "sdk",
+                "volume"
             ]
         },
         {
@@ -151,9 +205,9 @@
             ]
         },
         {
-            "name": "github.com/evalphobia/logrus_kinesis",
+            "name": "github.com/facebookgo/stack",
             "branch": "master",
-            "revision": "3a9524d4e5540cc81c920ee17bd8ad1d47437f5d",
+            "revision": "751773369052141c013c6e827a71e8f35c07879c",
             "packages": [
                 "."
             ]
@@ -183,25 +237,17 @@
             ]
         },
         {
-            "name": "github.com/go-ini/ini",
-            "version": "v1.25.2",
-            "revision": "74bdc99692c3408cb103221e38675ce8fda0a718",
-            "packages": [
-                "."
-            ]
-        },
-        {
             "name": "github.com/gorilla/context",
             "version": "v1.1",
-            "revision": "a85d2e53ba63bdea074dbbbb5983f0516974e87b",
+            "revision": "1ea25387ff6f684839d82767c1733ff4d4d15d0a",
             "packages": [
                 "."
             ]
         },
         {
             "name": "github.com/gorilla/mux",
-            "version": "v1.3.0",
-            "revision": "392c28fe23e1c45ddba891b0320b3b5df220beea",
+            "branch": "master",
+            "revision": "ad4ce0eb1694e1a48fd8e2e764dd0e1aec118326",
             "packages": [
                 "."
             ]
@@ -209,9 +255,17 @@
         {
             "name": "github.com/hashicorp/hcl",
             "branch": "master",
-            "revision": "372e8ddaa16fd67e371e9323807d056b799360af",
+            "revision": "630949a3c5fa3c613328e1b8256052cbc2327c9b",
             "packages": [
-                "."
+                ".",
+                "hcl/ast",
+                "hcl/parser",
+                "hcl/scanner",
+                "hcl/strconv",
+                "hcl/token",
+                "json/parser",
+                "json/scanner",
+                "json/token"
             ]
         },
         {
@@ -226,14 +280,6 @@
             "name": "github.com/inconshreveable/mousetrap",
             "branch": "master",
             "revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/jmespath/go-jmespath",
-            "version": "0.2.2",
-            "revision": "3433f3ea46d9f8019119e7dd41274e112a2359a9",
             "packages": [
                 "."
             ]
@@ -265,7 +311,7 @@
         {
             "name": "github.com/mattn/go-colorable",
             "branch": "master",
-            "revision": "5411d3eea5978e6cdc258b30de592b60df6aba96",
+            "revision": "d898aa9fb31c91f35dd28ca75db377eff023c076",
             "packages": [
                 "."
             ]
@@ -280,7 +326,7 @@
         },
         {
             "name": "github.com/mattn/go-shellwords",
-            "version": "v1.0.2",
+            "branch": "master",
             "revision": "005a0944d84452842197c2108bd9168ced206f78",
             "packages": [
                 "."
@@ -304,7 +350,7 @@
         },
         {
             "name": "github.com/opencontainers/go-digest",
-            "version": "v1.0.0-rc0",
+            "branch": "master",
             "revision": "aa2ec055abd10d26d539eb630a92241b781ce4bc",
             "packages": [
                 "."
@@ -321,7 +367,7 @@
         {
             "name": "github.com/pelletier/go-buffruneio",
             "branch": "master",
-            "revision": "df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d",
+            "revision": "c37440a7cf42ac63b919c752ca73a85067e05992",
             "packages": [
                 "."
             ]
@@ -329,7 +375,7 @@
         {
             "name": "github.com/pelletier/go-toml",
             "branch": "master",
-            "revision": "22139eb5469018e7374b3e7ef653de37ffb44f72",
+            "revision": "361678322880708ac144df8575e6f01144ba1404",
             "packages": [
                 "."
             ]
@@ -337,7 +383,7 @@
         {
             "name": "github.com/pkg/errors",
             "branch": "master",
-            "revision": "248dadf4e9068a0b3e79f02ed0a610d935de5302",
+            "revision": "bfd5150e4e41705ded2129ec33379de1cb90b513",
             "packages": [
                 "."
             ]
@@ -345,7 +391,7 @@
         {
             "name": "github.com/pmezard/go-difflib",
             "version": "v1.0.0",
-            "revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+            "revision": "c0b812dadcf4498dede02bb7f0c5c478be997e34",
             "packages": [
                 "difflib"
             ]
@@ -353,15 +399,7 @@
         {
             "name": "github.com/rai-project/config",
             "branch": "master",
-            "revision": "0e314b8ace535477c437c3dd3ac5c0bf23f55eb9",
-            "packages": [
-                "."
-            ]
-        },
-        {
-            "name": "github.com/rai-project/cudainfo",
-            "branch": "master",
-            "revision": "9f96f70121b6ee72ee8083e9ba6e93b6c1998c50",
+            "revision": "4aa19f8adcdc677cdbcf102c3e48bd83d169f4f8",
             "packages": [
                 "."
             ]
@@ -369,7 +407,7 @@
         {
             "name": "github.com/rai-project/godotenv",
             "branch": "master",
-            "revision": "49a98d71a654e5f90239723ae80518a1e234bdd5",
+            "revision": "4eea5d4863542334d540a85cbd0ce558ca30d90c",
             "packages": [
                 "."
             ]
@@ -377,7 +415,7 @@
         {
             "name": "github.com/rai-project/ldcache",
             "branch": "master",
-            "revision": "a38d663b57a515be159dcd4daef6d9ed98d0e6a4",
+            "revision": "0801cfa9911a99eaf09619b6350ac6cbb3d5089e",
             "packages": [
                 "."
             ]
@@ -385,7 +423,15 @@
         {
             "name": "github.com/rai-project/logger",
             "branch": "master",
-            "revision": "c2cee355c0b630c5f6c2c169bdf541b32c9f8b06",
+            "revision": "03818fe07fa7d04ed67bb0a30bba6fa771c216a6",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/rai-project/nvidia-smi",
+            "branch": "master",
+            "revision": "95159033f43aa02e0a25a448215fad2e8cfd4c2e",
             "packages": [
                 "."
             ]
@@ -393,7 +439,7 @@
         {
             "name": "github.com/rai-project/vipertags",
             "branch": "master",
-            "revision": "997637b503048b1f8d2a1126ff497db620632608",
+            "revision": "9c71f81fd78302f0665e1d180c506d26a19f226a",
             "packages": [
                 "."
             ]
@@ -409,15 +455,16 @@
         {
             "name": "github.com/spf13/afero",
             "branch": "master",
-            "revision": "72b31426848c6ef12a7a8e216708cb0d1530f074",
+            "revision": "9be650865eab0c12963d8753212f4f9c66cdcf12",
             "packages": [
-                "."
+                ".",
+                "mem"
             ]
         },
         {
             "name": "github.com/spf13/cast",
             "branch": "master",
-            "revision": "d1139bab1c07d5ad390a65e7305876b3c1a8370b",
+            "revision": "f820543c3592e283e311a60d2a600a664e39f6f7",
             "packages": [
                 "."
             ]
@@ -425,7 +472,7 @@
         {
             "name": "github.com/spf13/cobra",
             "branch": "master",
-            "revision": "ee4055870c2d5f7ce112642377e32c9929c3bbaf",
+            "revision": "92ea23a837e66f46ac9e7d04fa826602b7b0a42d",
             "packages": [
                 "."
             ]
@@ -449,7 +496,7 @@
         {
             "name": "github.com/spf13/viper",
             "branch": "master",
-            "revision": "5ed0fc31f7f453625df314d8e66b9791e8d13003",
+            "revision": "7538d73b4eb9511d85a9f1dfef202eeb8ac260f4",
             "packages": [
                 "."
             ]
@@ -460,13 +507,14 @@
             "revision": "69483b4bd14f5845b5a1e55bca19e954e827f1d0",
             "packages": [
                 "assert",
+                "require",
                 "suite"
             ]
         },
         {
             "name": "golang.org/x/net",
             "branch": "master",
-            "revision": "b4690f45fa1cafc47b1c280c2e75116efe40cc13",
+            "revision": "906cda9512f77671ab44f8c8563b13a8e707b230",
             "packages": [
                 "context",
                 "context/ctxhttp",
@@ -476,7 +524,7 @@
         {
             "name": "golang.org/x/sys",
             "branch": "master",
-            "revision": "075e574b89e4c2d22f2286a7e2b919519c6f3547",
+            "revision": "e4594059fe4cde2daf423055a596c2cd1e6c9adf",
             "packages": [
                 "unix",
                 "windows"
@@ -485,9 +533,13 @@
         {
             "name": "golang.org/x/text",
             "branch": "master",
-            "revision": "85c29909967d7f171f821e7a42e7b7af76fb9598",
+            "revision": "0ad425fe45e885577bef05dc1c50f72e33188b16",
             "packages": [
+                "internal/gen",
+                "internal/triegen",
+                "internal/ucd",
                 "transform",
+                "unicode/cldr",
                 "unicode/norm"
             ]
         },
