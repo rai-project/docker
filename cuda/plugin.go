@@ -65,22 +65,99 @@ func (CUDADriver) List(req volume.Request) volume.Response {
 }
 
 func (CUDADriver) Get(req volume.Request) volume.Response {
-	return volume.Response{}
+	vol, version, err := getVolume(req.Name)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
+		}
+	}
+	// The volume version requested needs to match the volume version in cache
+	if version != vol.Version {
+		return volume.Response{
+			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
+		}
+	}
+	ok, err := vol.Exists(version)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to check if volme %v exists", vol.Name).Error(),
+		}
+	}
+	if !ok {
+		return volume.Response{
+			Err: errors.Errorf("volume %v was not found", vol.Name).Error(),
+		}
+	}
+	return volume.Response{
+		Volume: &volume.Volume{
+			Name:       vol.Name,
+			Mountpoint: path.Join(vol.Path, version),
+		},
+	}
 }
 
 func (CUDADriver) Remove(req volume.Request) volume.Response {
+	vol, version, err := getVolume(req.Name)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
+		}
+	}
+	// The volume version requested needs to match the volume version in cache
+	if version != vol.Version {
+		return volume.Response{
+			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
+		}
+	}
+	err = vol.Remove(version)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to remove volume %v", vol.Name).Error(),
+		}
+	}
 	return volume.Response{}
 }
 
-func (CUDADriver) Path(req volume.Request) volume.Response {
-	return volume.Response{}
+func (c CUDADriver) Path(req volume.Request) volume.Response {
+	return c.Mount(volume.MountRequest{Name: req.Name})
 }
 
 func (CUDADriver) Mount(req volume.MountRequest) volume.Response {
-	return volume.Response{}
+	vol, version, err := getVolume(req.Name)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
+		}
+	}
+	// The volume version requested needs to match the volume version in cache
+	if version != vol.Version {
+		return volume.Response{
+			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
+		}
+	}
+	ok, err := vol.Exists(version)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to check if volme %v exists", vol.Name).Error(),
+		}
+	}
+	if !ok {
+		return volume.Response{
+			Err: errors.Errorf("volume %v was not found", vol.Name).Error(),
+		}
+	}
+	return volume.Response{
+		Mountpoint: path.Join(vol.Path, version),
+	}
 }
 
 func (CUDADriver) Unmount(req volume.UnmountRequest) volume.Response {
+	_, _, err := getVolume(req.Name)
+	if err != nil {
+		return volume.Response{
+			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
+		}
+	}
 	return volume.Response{}
 }
 
