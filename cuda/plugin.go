@@ -170,5 +170,8 @@ func (CUDADriver) Capabilities(req volume.Request) volume.Response {
 func Serve() {
 	d := CUDADriver{}
 	h := volume.NewHandler(d)
-	h.ServeTCP("cuda_plugin", "localhost", nil)
+	err := h.ServeTCP("cuda_plugin", "localhost:9000", nil)
+	if err != nil {
+		log.WithError(err).Error("Failed to serve cuda_plugin using localhost")
+	}
 }
