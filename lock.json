@@ -239,7 +239,7 @@
         {
             "name": "github.com/gorilla/context",
             "version": "v1.1",
-            "revision": "a85d2e53ba63bdea074dbbbb5983f0516974e87b",
+            "revision": "1ea25387ff6f684839d82767c1733ff4d4d15d0a",
             "packages": [
                 "."
             ]
