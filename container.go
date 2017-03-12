@@ -109,3 +109,7 @@ func (c *Container) remove() error {
 	)
 	return err
 }
+
+func (c *Container) Options() ContainerOptions {
+	return c.options
+}

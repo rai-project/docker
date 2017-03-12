@@ -77,6 +77,7 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		StdinOnce:       false,
 		Tty:             true,
 		NetworkDisabled: true,
+		WorkingDir:      "/buil",
 		StopSignal:      "SIGKILL",
 	}
 	hostConfig := &container.HostConfig{
