@@ -50,7 +50,6 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 				_, err = stdcopy.StdCopy(outputStream, errorStream, resp.Reader)
 			}
 
-			log.Debug("[hijack] End of stdout")
 			receiveStdout <- err
 		}()
 	}
@@ -66,7 +65,6 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 					restoreTerminal(streams, inputStream)
 				})
 			}
-			log.Debug("[hijack] End of stdin")
 		}
 		// if err := resp.CloseWrite(); err != nil {
 		// 	log.Debugf("Couldn't send EOF: %s", err)
