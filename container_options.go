@@ -65,10 +65,6 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		Shell: []string{
 			"/bin/bash",
 		},
-		Cmd: []string{
-			"sleep",
-			"4h",
-		},
 		User:            Config.Username,
 		AttachStdin:     c.options.stdin != nil,
 		AttachStdout:    true,
@@ -77,8 +73,9 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		StdinOnce:       false,
 		Tty:             true,
 		NetworkDisabled: true,
-		WorkingDir:      "/buil",
+		WorkingDir:      "/build",
 		StopSignal:      "SIGKILL",
+		Volumes:         map[string]struct{}{},
 	}
 	hostConfig := &container.HostConfig{
 		Privileged:      true,
@@ -172,6 +169,12 @@ func Hostname(h string) ContainerOption {
 func WorkingDirectory(dir string) ContainerOption {
 	return func(o *ContainerOptions) {
 		o.containerConfig.WorkingDir = dir
+	}
+}
+
+func AddVolume(dir string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Volumes[dir] = struct{}{}
 	}
 }
 
