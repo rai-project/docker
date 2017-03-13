@@ -8,11 +8,11 @@ import:
 - package: github.com/cenkalti/backoff
   version: ~1.0.0
 - package: github.com/docker/distribution
-  version: ~2.6.0
+  version: master
   subpackages:
   - reference
 - package: github.com/docker/docker
-  version: ~17.3.0-ce-rc1
+  version: master
   subpackages:
   - api
   - api/types
