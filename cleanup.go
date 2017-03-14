@@ -5,10 +5,9 @@ import (
 
 	"github.com/carlescere/scheduler"
 	"github.com/docker/docker/api/types"
-	"github.com/rai-project/config"
 )
 
-func cleanup() {
+func cleanupDeadContainers() {
 	client, err := NewClient()
 	if err != nil {
 		return
@@ -40,8 +39,6 @@ func cleanup() {
 	}
 }
 
-func init() {
-	config.AfterInit(func() {
-		scheduler.Every(5).Minutes().NotImmediately().Run(cleanup)
-	})
+func PeriodicCleanupDeadContainers() {
+	scheduler.Every(5).Minutes().NotImmediately().Run(cleanupDeadContainers)
 }
