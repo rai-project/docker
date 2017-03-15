@@ -76,6 +76,10 @@ func (c *Container) Info() (types.ContainerJSON, error) {
 	return info, nil
 }
 
+func (c *Container) Close() error {
+	return c.Stop()
+}
+
 func (c *Container) Stop() error {
 	defer c.options.cancelFunc()
 	if !c.isStarted {
