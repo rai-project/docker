@@ -73,18 +73,30 @@ func APIVersion(s string) ClientOption {
 
 func Stderr(stderr io.Writer) ClientOption {
 	return func(o *ClientOptions) {
+		if s, ok := stderr.(*command.OutStream); ok {
+			o.stderr = s
+			return
+		}
 		o.stderr = command.NewOutStream(stderr)
 	}
 }
 
 func Stdout(stdout io.Writer) ClientOption {
 	return func(o *ClientOptions) {
+		if s, ok := stdout.(*command.OutStream); ok {
+			o.stdout = s
+			return
+		}
 		o.stdout = command.NewOutStream(stdout)
 	}
 }
 
 func Stdin(stdin io.Reader) ClientOption {
 	return func(o *ClientOptions) {
+		if s, ok := stdin.(*command.InStream); ok {
+			o.stdin = s
+			return
+		}
 		o.stdin = command.NewInStream(ioutil.NopCloser(stdin))
 	}
 }

@@ -62,7 +62,10 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		Hostname: fmt.Sprintf("%s-run-%s", config.App.Name, uuid.NewV4()),
 		Env:      getEnv(),
 		Image:    Config.Image,
-		Shell: []string{
+		// Shell: []string{
+		// 	"/bin/bash",
+		// },
+		Entrypoint: []string{
 			"/bin/bash",
 		},
 		User:            Config.Username,

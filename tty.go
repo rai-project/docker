@@ -10,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/cli/command"
 	"github.com/docker/docker/pkg/signal"
+	"github.com/docker/docker/pkg/term"
 	"github.com/pkg/errors"
 )
 
@@ -39,19 +40,30 @@ func resizeTty(c *Container, e *Execution, height, width uint, isExec bool) {
 }
 
 func monitorTtySize(c *Container, e *Execution, isExec bool) error {
-	stdout := c.client.options.stdout
-	if isExec && e.Stdout != nil {
-		if s, ok := e.Stdout.(*command.OutStream); ok {
-			stdout = s
+	stdin := c.client.options.stdin
+	if isExec && e.Stdin != nil {
+		if s, ok := e.Stdin.(*command.InStream); ok {
+			stdin = s
 		}
 	}
-	if !stdout.IsTerminal() {
-		log.Debug("unable to monitor tty size, because stdout is not a terminal")
+	if stdin == nil {
+		return nil
+	}
+
+	if !stdin.IsTerminal() {
+		log.Debug("unable to monitor tty size, because stdin is not a terminal")
 		return errors.New("not a terminal")
 	}
 
+	getTtySize := func() (uint, uint) {
+		ws, err := term.GetWinsize(stdin.FD())
+		if err != nil {
+			return 0, 0
+		}
+		return uint(ws.Height), uint(ws.Width)
+	}
 	doResizeTty := func() {
-		h, w := stdout.GetTtySize()
+		h, w := getTtySize()
 		resizeTty(c, e, h, w, isExec)
 	}
 
@@ -59,10 +71,10 @@ func monitorTtySize(c *Container, e *Execution, isExec bool) error {
 
 	if runtime.GOOS == "windows" {
 		go func() {
-			prevH, prevW := stdout.GetTtySize()
+			prevH, prevW := getTtySize()
 			for {
 				time.Sleep(time.Millisecond * 250)
-				h, w := stdout.GetTtySize()
+				h, w := getTtySize()
 				if h != prevH || w != prevW {
 					doResizeTty()
 				}
