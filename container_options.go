@@ -131,6 +131,12 @@ func Shell(s []string) ContainerOption {
 	}
 }
 
+func Entrypoint(s []string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Entrypoint = s
+	}
+}
+
 func Cmd(s []string) ContainerOption {
 	return func(o *ContainerOptions) {
 		o.containerConfig.Cmd = s
