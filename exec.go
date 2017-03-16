@@ -133,6 +133,11 @@ func (e *Execution) Start() error {
 	}
 	isTty := container.options.containerConfig.Tty
 
+	env := e.Env
+	if len(env) == 0 {
+		env = container.options.containerConfig.Env
+	}
+
 	cmd := append([]string{e.Path}, e.Args...)
 	execOpts := types.ExecConfig{
 		AttachStdin:  e.Stdin != nil,
@@ -143,7 +148,7 @@ func (e *Execution) Start() error {
 		Cmd:          cmd,
 		User:         container.options.containerConfig.User,
 		Privileged:   container.options.hostConfig.Privileged,
-		Env:          container.options.containerConfig.Env,
+		Env:          env,
 	}
 	execID, err := client.ContainerExecCreate(
 		e.context,
