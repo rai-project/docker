@@ -90,14 +90,18 @@ func (c *Container) Stop() error {
 	return c.remove()
 }
 
-func (c *Container) kill() error {
+func (c *Container) killWithSignal(sig string) error {
 	client := c.client
 	err := client.ContainerKill(
 		c.options.context,
 		c.ID,
-		"SIGKILL",
+		sig,
 	)
 	return err
+}
+
+func (c *Container) kill() error {
+	return c.killWithSignal("SIGKILL")
 }
 
 func (c *Container) remove() error {
