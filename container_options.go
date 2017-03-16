@@ -72,7 +72,7 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		AttachStdin:     c.options.stdin != nil,
 		AttachStdout:    true,
 		AttachStderr:    true,
-		OpenStdin:       true,
+		OpenStdin:       c.options.stdin != nil,
 		StdinOnce:       false,
 		Tty:             true,
 		NetworkDisabled: true,
