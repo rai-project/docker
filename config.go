@@ -23,17 +23,21 @@ type dockerConfig struct {
 	APIVersion        string            `json:"api_version" config:"docker.api_version" default:"default" env:"DOCKER_API_VERSION"`
 	CertPath          string            `json:"cert_path" config:"docker.cert_path" default:"" env:"DOCKER_CERT_PATH"`
 	TLSVerify         bool              `json:"tls_verify" config:"docker.tls_verify" default:"false" env:"DOCKER_TLS_VERIFY"`
+	done              chan struct{}     `json:"-" config:"-"`
 }
 
 var (
-	Config = &dockerConfig{}
+	Config = &dockerConfig{
+		done: make(chan struct{}),
+	}
 )
 
 func (dockerConfig) ConfigName() string {
 	return "Docker"
 }
 
-func (dockerConfig) SetDefaults() {
+func (a *dockerConfig) SetDefaults() {
+	vipertags.SetDefaults(a)
 }
 
 func (a *dockerConfig) Read() {
@@ -51,6 +55,10 @@ func (a *dockerConfig) Read() {
 	if a.APIVersion == "" || a.APIVersion == "default" {
 		a.APIVersion = api.DefaultVersion
 	}
+}
+
+func (c dockerConfig) Wait() {
+	<-c.done
 }
 
 func (c dockerConfig) String() string {
