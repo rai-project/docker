@@ -42,6 +42,8 @@ var (
 		"BUILD_DIR":      "/build",
 		"TERM":           "xterm",
 		"PATH":           "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+		"SHELL":          "/bin/bash",
+		"SHELLOPTS":      "braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor",
 	}
 )
 
@@ -116,6 +118,18 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		parentCtx:       c.options.context,
 		context:         ctx,
 		cancelFunc:      cancelFunc,
+	}
+}
+
+func Image(s string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Image = s
+	}
+}
+
+func AddEnv(k, v string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Env = append(o.containerConfig.Env, k+"="+v)
 	}
 }
 
