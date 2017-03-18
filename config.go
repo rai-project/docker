@@ -41,6 +41,7 @@ func (a *dockerConfig) SetDefaults() {
 }
 
 func (a *dockerConfig) Read() {
+	defer close(a.done)
 	vipertags.Fill(a)
 	if a.MemoryLimitString != "" {
 		if bts, err := humanize.ParseBytes(a.MemoryLimitString); err == nil {
