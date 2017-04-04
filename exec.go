@@ -58,10 +58,20 @@ type Execution struct {
 
 func NewExecution(container *Container, args ...string) (*Execution, error) {
 	ctx, cancelFunc := context.WithCancel(container.options.context)
+
+	var cmd string
+	var cmdArgs []string
+
+	if len(args) > 0 {
+		cmd = args[0]
+	}
+	if len(args) > 1 {
+		cmdArgs = args[1:]
+	}
 	return &Execution{
 		container:  container,
-		Path:       args[0],
-		Args:       args[1:],
+		Path:       cmd,
+		Args:       cmdArgs,
 		context:    ctx,
 		cancelFunc: cancelFunc,
 		isStarted:  false,
