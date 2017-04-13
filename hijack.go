@@ -66,9 +66,9 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 				})
 			}
 		}
-		// if err := resp.CloseWrite(); err != nil {
-		// 	log.Debugf("Couldn't send EOF: %s", err)
-		// }
+		if err := resp.CloseWrite(); err != nil {
+			log.Debugf("Couldn't send EOF: %s", err)
+		}
 		close(stdinDone)
 	}()
 
