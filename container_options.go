@@ -121,6 +121,12 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 	}
 }
 
+func Tty(b bool) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.Tty = b
+	}
+}
+
 func Image(s string) ContainerOption {
 	return func(o *ContainerOptions) {
 		o.containerConfig.Image = s
