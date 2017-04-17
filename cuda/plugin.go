@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/docker/go-plugins-helpers/volume"
+	"github.com/docker/libcontainer/user"
 	"github.com/pkg/errors"
 )
 
@@ -170,8 +171,22 @@ func (CUDADriver) Capabilities(req volume.Request) volume.Response {
 func Serve() {
 	d := CUDADriver{}
 	h := volume.NewHandler(d)
-	err := h.ServeTCP("cuda_plugin", "localhost:9000", nil)
+	log.Debug("starting to create a rai-cuda new volume handler")
+	gid, err := lookupGidByName("docker")
 	if err != nil {
-		log.WithError(err).Error("Failed to serve cuda_plugin using localhost")
+		log.WithError(err).Error("Failed to get gid for docker user")
 	}
+	log.WithField("gid", gid).Debug("starting rai-cuda docker plugin")
+	err = h.ServeUnix("rai-cuda", gid)
+	if err != nil {
+		log.WithError(err).Error("Failed to serve rai-cuda using localhost")
+	}
+}
+
+func lookupGidByName(group string) (int, error) {
+	grp, err := user.LookupGroup(group)
+	if err != nil {
+		return -1, err
+	}
+	return grp.Gid, nil
 }
