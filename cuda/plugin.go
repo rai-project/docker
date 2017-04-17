@@ -170,14 +170,18 @@ func (CUDADriver) Capabilities(req volume.Request) volume.Response {
 
 func Serve() {
 	d := CUDADriver{}
+
+	println("got cuda driver ")
 	h := volume.NewHandler(d)
+	println("working on handle")
 	log.Debug("starting to create a rai-cuda new volume handler")
 	gid, err := lookupGidByName("docker")
 	if err != nil {
 		log.WithError(err).Error("Failed to get gid for docker user")
 	}
 	log.WithField("gid", gid).Debug("starting rai-cuda docker plugin")
-	err = h.ServeUnix("rai-cuda", gid)
+	_ = gid
+	err = h.ServeUnix("/run/docker/plugins/rai-cuda.sock", 0)
 	if err != nil {
 		log.WithError(err).Error("Failed to serve rai-cuda using localhost")
 	}

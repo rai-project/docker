@@ -55,7 +55,7 @@ var (
 	VolumesPath = "/var/lib/nvidia-docker/volumes"
 	Volumes     = []VolumeInfo{
 		{
-			Name:         "nvidia_driver",
+			Name:         "rai-cuda",
 			Mountpoint:   "/usr/local/nvidia",
 			MountOptions: "ro",
 			Components: components{

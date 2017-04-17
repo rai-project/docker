@@ -13,6 +13,7 @@ import (
 	"github.com/imdario/mergo"
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -270,14 +271,17 @@ func Devices(ds []container.DeviceMapping) ContainerOption {
 	}
 }
 
-func NvidiaDocker(version string) ContainerOption {
+func NvidiaVolume(version string) ContainerOption {
 	return func(o *ContainerOptions) {
-		o.hostConfig.VolumeDriver = "nvidia-docker"
+		if version == "" && nvidiasmi.HasGPU {
+			version = nvidiasmi.Info.DriverVersion
+		}
+		//o.hostConfig.VolumeDriver = "rai-cuda"
 		o.hostConfig.Mounts = append(
 			o.hostConfig.Mounts,
 			mount.Mount{
 				Type:     mount.TypeVolume,
-				Source:   "/var/lib/nvidia-docker/volumes/nvidia_driver/" + version,
+				Source:   "/usr/lib/nvidia-" + version,
 				Target:   "/usr/local/nvidia",
 				ReadOnly: false,
 				VolumeOptions: &mount.VolumeOptions{
@@ -285,7 +289,8 @@ func NvidiaDocker(version string) ContainerOption {
 						"name": "nvidia_driver_" + version,
 					},
 					DriverConfig: &mount.Driver{
-						Name: "nvidia_driver_" + version,
+						//Name: "nvidia_driver_" + version,
+						Name: "rai-cuda",
 					},
 				},
 			},
