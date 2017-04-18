@@ -7,14 +7,20 @@ import (
 
 	"github.com/docker/go-plugins-helpers/volume"
 	"github.com/docker/libcontainer/user"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 )
 
 type CUDADriver struct{}
 
 func getVolume(name string) (*Volume, string, error) {
+	pp.Println("volume name = " + name)
 	re := regexp.MustCompile("^([a-zA-Z0-9_.-]+)_([0-9.]+)$")
 	m := re.FindStringSubmatch(name)
+	if len(m) == 2 && nvidiasmi.HasGPU {
+		return getVolume(name + "_" + nvidiasmi.Info.DriverVersion)
+	}
 	if len(m) != 3 {
 		return nil, "", errors.Errorf("%v is not a valid volume format", name)
 	}
@@ -171,9 +177,7 @@ func (CUDADriver) Capabilities(req volume.Request) volume.Response {
 func Serve() {
 	d := CUDADriver{}
 
-	println("got cuda driver ")
 	h := volume.NewHandler(d)
-	println("working on handle")
 	log.Debug("starting to create a rai-cuda new volume handler")
 	gid, err := lookupGidByName("docker")
 	if err != nil {

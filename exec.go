@@ -132,9 +132,9 @@ func (e *Execution) Start() error {
 	container := e.container
 	client := container.client
 
-	if e.Stdin == nil {
-		e.Stdin = client.options.stdin
-	}
+	//if e.Stdin == nil {
+	//	e.Stdin = client.options.stdin
+	//}
 	if e.Stdout == nil {
 		e.Stdout = client.options.stdout
 	}

@@ -30,7 +30,7 @@ func NewClientOptions() *ClientOptions {
 		apiVersion: Config.APIVersion,
 		stderr:     command.NewOutStream(ioutil.Discard),
 		stdout:     command.NewOutStream(ioutil.Discard),
-		stdin:      command.NewInStream(empty),
+		stdin:      nil,
 		context:    context.Background(),
 	}
 	if com.IsDir(Config.CertPath) {
@@ -73,6 +73,10 @@ func APIVersion(s string) ClientOption {
 
 func Stderr(stderr io.Writer) ClientOption {
 	return func(o *ClientOptions) {
+		if stderr == nil {
+			o.stderr = nil
+			return
+		}
 		if s, ok := stderr.(*command.OutStream); ok {
 			o.stderr = s
 			return
@@ -83,6 +87,10 @@ func Stderr(stderr io.Writer) ClientOption {
 
 func Stdout(stdout io.Writer) ClientOption {
 	return func(o *ClientOptions) {
+		if stdout == nil {
+			o.stdout = nil
+			return
+		}
 		if s, ok := stdout.(*command.OutStream); ok {
 			o.stdout = s
 			return
@@ -93,6 +101,10 @@ func Stdout(stdout io.Writer) ClientOption {
 
 func Stdin(stdin io.Reader) ClientOption {
 	return func(o *ClientOptions) {
+		if stdin == nil {
+			o.stdin = nil
+			return
+		}
 		if s, ok := stdin.(*command.InStream); ok {
 			o.stdin = s
 			return

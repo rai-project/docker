@@ -122,10 +122,16 @@ type stream struct {
 }
 
 func (s *stream) In() *command.InStream {
+	if s.stdin == nil {
+		return nil
+	}
 	return command.NewInStream(s.stdin)
 }
 
 func (s *stream) Out() *command.OutStream {
+	if s.stdout == nil {
+		return nil
+	}
 	return command.NewOutStream(s.stdout)
 }
 

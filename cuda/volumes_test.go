@@ -11,7 +11,7 @@ import (
 
 func TestGetVolume(t *testing.T) {
 	version := nvidiasmi.Info.DriverVersion
-	volume, ver, err := getVolume("nvidia_driver_" + version)
+	volume, ver, err := getVolume("rai-cuda_" + version)
 	assert.NoError(t, err)
 	assert.Equal(t, version, ver)
 	assert.NotNil(t, volume)

@@ -52,7 +52,7 @@ type volumeMap map[string]*Volume
 
 var (
 	VolumeMap   volumeMap
-	VolumesPath = "/var/lib/nvidia-docker/volumes"
+	VolumesPath = "/var/lib/rai-cuda/volumes"
 	Volumes     = []VolumeInfo{
 		{
 			Name:         "rai-cuda",

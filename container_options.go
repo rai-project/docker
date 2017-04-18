@@ -31,20 +31,21 @@ type ContainerOption func(*ContainerOptions)
 
 var (
 	DefaultContainerEnv = map[string]string{
-		"CI":             "rai",
-		"RAI":            "true",
-		"RAI_ARCH":       filepath.Join(runtime.GOOS, runtime.GOARCH),
-		"RAI_USER":       "root",
-		"RAI_SOURCE_DIR": "/src",
-		"RAI_DATA_DIR":   "/data",
-		"RAI_BUILD_DIR":  "/build",
-		"DATA_DIR":       "/dir",
-		"SOURCE_DIR":     "/src",
-		"BUILD_DIR":      "/build",
-		"TERM":           "xterm",
-		"PATH":           "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-		"SHELL":          "/bin/bash",
-		"SHELLOPTS":      "braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor",
+		"CI":              "rai",
+		"RAI":             "true",
+		"RAI_ARCH":        filepath.Join(runtime.GOOS, runtime.GOARCH),
+		"RAI_USER":        "root",
+		"RAI_SOURCE_DIR":  "/src",
+		"RAI_DATA_DIR":    "/data",
+		"RAI_BUILD_DIR":   "/build",
+		"DATA_DIR":        "/dir",
+		"SOURCE_DIR":      "/src",
+		"BUILD_DIR":       "/build",
+		"TERM":            "xterm",
+		"PATH":            "/usr/local/cuda/bin:/usr/local/nvidia/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+		"LD_LIBRARY_PATH": "/usr/local/cuda/lib64:/usr/local/nvidia/lib64",
+		"SHELL":           "/bin/bash",
+		"SHELLOPTS":       "braceexpand:emacs:hashall:histexpand:history:interactive-comments:monitor",
 	}
 )
 
@@ -281,15 +282,14 @@ func NvidiaVolume(version string) ContainerOption {
 			o.hostConfig.Mounts,
 			mount.Mount{
 				Type:     mount.TypeVolume,
-				Source:   "/usr/lib/nvidia-" + version,
+				Source:   "rai-cuda_" + version,
 				Target:   "/usr/local/nvidia",
-				ReadOnly: false,
+				ReadOnly: true,
 				VolumeOptions: &mount.VolumeOptions{
 					Labels: map[string]string{
-						"name": "nvidia_driver_" + version,
+						"name": "rai-cuda_" + version,
 					},
 					DriverConfig: &mount.Driver{
-						//Name: "nvidia_driver_" + version,
 						Name: "rai-cuda",
 					},
 				},
