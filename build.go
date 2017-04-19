@@ -3,10 +3,13 @@ package docker
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"time"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/cli/command"
 	"github.com/docker/docker/cli/command/image/build"
+	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/progress"
 	"github.com/docker/docker/pkg/streamformatter"
 	cache "github.com/patrickmn/go-cache"
@@ -19,13 +22,21 @@ var (
 func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 
 	// Setup an upload progress bar
-	out := c.options.stdout
-	progressOutput := streamformatter.NewStreamFormatter().NewProgressOutput(out, true)
-	if !out.IsTerminal() {
-		progressOutput = &lastProgressOutput{output: progressOutput}
+	stdout := c.options.stdout
+	if stdout == nil {
+		stdout = command.NewOutStream(ioutil.Discard)
+	}
+	stderr := c.options.stderr
+	if stderr == nil {
+		stderr = command.NewOutStream(ioutil.Discard)
 	}
 
-	buildCtx, relDockerfile, err = build.GetContextFromReader(config, "Dockerfile")
+	progressOutput := streamformatter.NewStreamFormatter().NewProgressOutput(stdout, true)
+
+	buildCtx, _, err := build.GetContextFromReader(ioutil.NopCloser(dockerReader), "Dockerfile")
+	if err != nil {
+		return err
+	}
 
 	var body io.Reader = progress.NewProgressReader(buildCtx, progressOutput, 0, "", "Sending build context to Docker daemon")
 
@@ -35,10 +46,17 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 
 	response, err := c.Client.ImageBuild(c.options.context, body, buildOptions)
 	if err != nil {
-		fmt.Fprintf(c.options.stderr, "%s", progBuff)
+		fmt.Fprintf(stderr, "%v", err)
 		return err
 	}
+
 	defer response.Body.Close()
+
+	err = jsonmessage.DisplayJSONMessagesStream(response.Body, stdout, stdout.FD(), stdout.IsTerminal(), nil)
+	if err != nil {
+		fmt.Fprintf(stderr, "%v", err)
+		return err
+	}
 
 	return nil
 }
@@ -48,7 +66,7 @@ func (c *Client) ImageBuildCached(name string, dockerReader io.Reader) error {
 		return c.ImageBuild(name, dockerReader)
 	}
 
-	if build, found := imageBuildCache.Get(name); found {
+	if _, found := imageBuildCache.Get(name); found {
 		return nil
 	}
 
