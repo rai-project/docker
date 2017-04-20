@@ -129,6 +129,12 @@ func Tty(b bool) ContainerOption {
 	}
 }
 
+func OpenStdin(b bool) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.OpenStdin = b
+	}
+}
+
 func Image(s string) ContainerOption {
 	return func(o *ContainerOptions) {
 		o.containerConfig.Image = s
