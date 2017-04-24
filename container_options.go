@@ -215,6 +215,12 @@ func Memory(n int64) ContainerOption {
 	}
 }
 
+func NetworkDisabled(b bool) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.containerConfig.NetworkDisabled = b
+	}
+}
+
 func CUDADevice(n int) ContainerOption {
 	dev := fmt.Sprintf("/dev/nvidia%d", n)
 	return Devices([]container.DeviceMapping{
