@@ -16,7 +16,7 @@ type dockerConfig struct {
 	TimeLimit         time.Duration     `json:"time_limit" config:"docker.time_limit" default:"1h"`
 	Image             string            `json:"image" config:"docker.image" default:"ubuntu"`
 	Username          string            `json:"username" config:"docker.username" default:"root"`
-	MemoryLimitString string            `json:"memory_limit" config:"docker.memory_limit" default:"4gb"`
+	MemoryLimitString string            `json:"memory_limit" config:"docker.memory_limit" default:"16gb"`
 	MemoryLimit       int64             `json:"-" config:"-"`
 	Env               map[string]string `json:"env" config:"docker.env"`
 	Host              string            `json:"host" config:"docker.host" default:"default" env:"DOCKER_HOST"`

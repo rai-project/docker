@@ -1,8 +1,6 @@
 package docker
 
 import (
-	"context"
-
 	"github.com/docker/docker/api/types"
 	"github.com/k0kubun/pp"
 )
@@ -12,6 +10,7 @@ type Container struct {
 	isStarted bool
 	client    *Client
 	options   ContainerOptions
+	done      chan bool
 }
 
 func NewContainer(client *Client, paramOpts ...ContainerOption) (*Container, error) {
@@ -39,18 +38,26 @@ func NewContainer(client *Client, paramOpts ...ContainerOption) (*Container, err
 		ID:      c.ID,
 		client:  client,
 		options: *options,
+		done:    make(chan bool),
 	}
-	go func() {
-		<-options.context.Done()
-		if options.context.Err() == context.DeadlineExceeded {
-			container.Stop()
-		}
-	}()
 	return container, nil
 }
 
 func (c *Container) Start() error {
 	client := c.client
+	ctx := c.options.context
+	if _, ok := ctx.Deadline(); ok {
+		go func() {
+			for {
+				select {
+				case <-c.done:
+					return
+				case <-ctx.Done():
+					c.Stop()
+				}
+			}
+		}()
+	}
 	err := client.ContainerStart(
 		c.options.context,
 		c.ID,
@@ -82,6 +89,9 @@ func (c *Container) Close() error {
 
 func (c *Container) Stop() error {
 	defer c.options.cancelFunc()
+	defer func() {
+		c.done <- true
+	}()
 	if !c.isStarted {
 		return nil
 	}
