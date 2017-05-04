@@ -6,9 +6,9 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
-	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/moby/moby/api/types"
+	"github.com/moby/moby/cli/command"
+	"github.com/moby/moby/pkg/stdcopy"
 	"github.com/pkg/errors"
 )
 

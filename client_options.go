@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/Unknwon/com"
-	"github.com/docker/docker/cli/command"
+	"github.com/moby/moby/cli/command"
 	"github.com/docker/go-connections/tlsconfig"
 )
 

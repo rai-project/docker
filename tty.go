@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
-	"github.com/docker/docker/pkg/signal"
-	"github.com/docker/docker/pkg/term"
+	"github.com/moby/moby/api/types"
+	"github.com/moby/moby/cli/command"
+	"github.com/moby/moby/pkg/signal"
+	"github.com/moby/moby/pkg/term"
 	"github.com/pkg/errors"
 )
 

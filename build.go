@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
-	"github.com/docker/docker/cli/command/image/build"
-	"github.com/docker/docker/pkg/jsonmessage"
-	"github.com/docker/docker/pkg/progress"
-	"github.com/docker/docker/pkg/streamformatter"
+	"github.com/moby/moby/api/types"
+	"github.com/moby/moby/cli/command"
+	"github.com/moby/moby/cli/command/image/build"
+	"github.com/moby/moby/pkg/jsonmessage"
+	"github.com/moby/moby/pkg/progress"
+	"github.com/moby/moby/pkg/streamformatter"
 	cache "github.com/patrickmn/go-cache"
 )
 

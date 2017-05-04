@@ -5,15 +5,32 @@ import:
 - package: github.com/Unknwon/com
   version: ~1.0.0
 - package: github.com/carlescere/scheduler
-  version: master
+  version: ~0.1.0
 - package: github.com/cenkalti/backoff
   version: ~1.0.0
 - package: github.com/docker/distribution
-  version: master
+  version: ~2.6.1
   subpackages:
   - reference
-- package: github.com/docker/docker
-  version: master
+- package: github.com/docker/go-connections
+  version: ~0.2.1
+  subpackages:
+  - tlsconfig
+- package: github.com/docker/go-plugins-helpers
+  subpackages:
+  - volume
+- package: github.com/docker/libcontainer
+  version: ~2.2.1
+  subpackages:
+  - user
+- package: github.com/dustin/go-humanize
+- package: github.com/imdario/mergo
+  version: ~0.2.2
+- package: github.com/junegunn/go-shellwords
+- package: github.com/k0kubun/pp
+  version: ~2.3.0
+- package: github.com/moby/moby
+  version: ~17.5.0-ce-rc3
   subpackages:
   - api
   - api/types
@@ -31,23 +48,6 @@ import:
   - pkg/stdcopy
   - pkg/streamformatter
   - pkg/term
-- package: github.com/docker/go-connections
-  version: master
-  subpackages:
-  - tlsconfig
-- package: github.com/docker/go-plugins-helpers
-  subpackages:
-  - volume
-- package: github.com/docker/libcontainer
-  version: master
-  subpackages:
-  - user
-- package: github.com/dustin/go-humanize
-- package: github.com/imdario/mergo
-  version: ~0.2.2
-- package: github.com/junegunn/go-shellwords
-- package: github.com/k0kubun/pp
-  version: ~2.3.0
 - package: github.com/patrickmn/go-cache
   version: ~2.0.0
 - package: github.com/pkg/errors
