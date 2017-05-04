@@ -88,14 +88,14 @@ func (c *Container) Close() error {
 }
 
 func (c *Container) Stop() error {
-	defer c.options.cancelFunc()
 	defer func() {
 		c.done <- true
 	}()
+	defer c.options.cancelFunc()
 	if !c.isStarted {
 		return nil
 	}
-	c.isStarted = false
+	defer c.isStarted = false
 	c.kill()
 	return c.remove()
 }
