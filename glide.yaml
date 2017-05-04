@@ -13,7 +13,7 @@ import:
   subpackages:
   - reference
 - package: github.com/docker/go-connections
-  version: ~0.2.1
+  version: master
   subpackages:
   - tlsconfig
 - package: github.com/docker/go-plugins-helpers
