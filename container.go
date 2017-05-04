@@ -1,7 +1,7 @@
 package docker
 
 import (
-	"github.com/moby/moby/api/types"
+	"github.com/docker/docker/api/types"
 	"github.com/k0kubun/pp"
 )
 

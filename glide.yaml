@@ -29,7 +29,7 @@ import:
 - package: github.com/junegunn/go-shellwords
 - package: github.com/k0kubun/pp
   version: ~2.3.0
-- package: github.com/moby/moby
+- package: github.com/docker/docker
   version: ~17.5.0-ce-rc3
   subpackages:
   - api

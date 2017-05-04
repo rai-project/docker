@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/moby/moby/api/types"
-	"github.com/moby/moby/cli/command"
-	"github.com/moby/moby/cli/command/image/build"
-	"github.com/moby/moby/pkg/jsonmessage"
-	"github.com/moby/moby/pkg/progress"
-	"github.com/moby/moby/pkg/streamformatter"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/cli/command"
+	"github.com/docker/docker/cli/command/image/build"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/progress"
+	"github.com/docker/docker/pkg/streamformatter"
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -31,7 +31,7 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 		stderr = command.NewOutStream(ioutil.Discard)
 	}
 
-	progressOutput := streamformatter.NewStreamFormatter().NewProgressOutput(stdout, true)
+	progressOutput := streamformatter.NewProgressOutput(streamformatter.NewStdoutWriter(stdout))
 
 	buildCtx, _, err := build.GetContextFromReader(ioutil.NopCloser(dockerReader), "Dockerfile")
 	if err != nil {

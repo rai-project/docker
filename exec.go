@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/cenkalti/backoff"
-	"github.com/moby/moby/api/types"
-	"github.com/moby/moby/pkg/promise"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/pkg/promise"
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/pkg/errors"
 )

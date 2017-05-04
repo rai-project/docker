@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/docker/distribution/reference"
-	"github.com/moby/moby/api/types"
-	"github.com/moby/moby/api/types/filters"
-	dc "github.com/moby/moby/client"
-	"github.com/moby/moby/pkg/jsonmessage"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
+	dc "github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/pkg/errors"
 )
 

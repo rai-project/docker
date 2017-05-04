@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/moby/moby/api"
-	"github.com/moby/moby/client"
+	"github.com/docker/docker/api"
+	"github.com/docker/docker/client"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/k0kubun/pp"
 	"github.com/rai-project/config"

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/carlescere/scheduler"
-	"github.com/moby/moby/api/types"
+	"github.com/docker/docker/api/types"
 )
 
 func cleanupDeadContainers() {

@@ -7,9 +7,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/moby/moby/api/types/container"
-	"github.com/moby/moby/api/types/mount"
-	"github.com/moby/moby/api/types/network"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/api/types/network"
 	"github.com/imdario/mergo"
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
