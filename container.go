@@ -95,7 +95,9 @@ func (c *Container) Stop() error {
 	if !c.isStarted {
 		return nil
 	}
-	defer c.isStarted = false
+	defer func() {
+		c.isStarted = false
+	}()
 	c.kill()
 	return c.remove()
 }
