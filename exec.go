@@ -18,7 +18,6 @@ import (
 type Execution struct {
 	container  *Container
 	context    context.Context
-	cancelFunc context.CancelFunc
 
 	// Path is the path or name of the command in the container.
 	Path string
@@ -57,7 +56,7 @@ type Execution struct {
 }
 
 func NewExecution(container *Container, args ...string) (*Execution, error) {
-	ctx, cancelFunc := context.WithCancel(container.options.context)
+	ctx := context.WithValue(container.options.context, "cmd", strings.Join([]string{args...}, " "))
 
 	var cmd string
 	var cmdArgs []string
@@ -73,7 +72,6 @@ func NewExecution(container *Container, args ...string) (*Execution, error) {
 		Path:       cmd,
 		Args:       cmdArgs,
 		context:    ctx,
-		cancelFunc: cancelFunc,
 		isStarted:  false,
 	}, nil
 }

@@ -113,9 +113,9 @@ func (c *Container) remove() error {
 		c.options.context,
 		c.ID,
 		types.ContainerRemoveOptions{
-			// RemoveVolumes: true,
-			// RemoveLinks:   true,
-			Force: true,
+			RemoveVolumes: true,
+			RemoveLinks:   true,
+			Force:         true,
 		},
 	)
 	return err

@@ -173,6 +173,7 @@ func Cmd(s []string) ContainerOption {
 
 func Timelimit(t time.Duration) ContainerOption {
 	return func(o *ContainerOptions) {
+		o.cancelFunc()
 		ctx, cancelFunc := context.WithTimeout(o.parentCtx, t)
 		o.context = ctx
 		o.cancelFunc = cancelFunc
