@@ -56,7 +56,7 @@ type Execution struct {
 }
 
 func NewExecution(container *Container, args ...string) (*Execution, error) {
-	ctx := context.WithValue(container.options.context, "cmd", strings.Join(args, " "))
+	ctx := context.WithValue(container.options.context, "cmd", strings.Join([]string{args...}, " "))
 
 	var cmd string
 	var cmdArgs []string
