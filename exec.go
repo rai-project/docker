@@ -16,8 +16,8 @@ import (
 )
 
 type Execution struct {
-	container  *Container
-	context    context.Context
+	container *Container
+	context   context.Context
 
 	// Path is the path or name of the command in the container.
 	Path string
@@ -56,7 +56,7 @@ type Execution struct {
 }
 
 func NewExecution(container *Container, args ...string) (*Execution, error) {
-	ctx := context.WithValue(container.options.context, "cmd", strings.Join([]string{args...}, " "))
+	ctx := context.WithValue(container.options.context, "cmd", strings.Join(args, " "))
 
 	var cmd string
 	var cmdArgs []string
@@ -68,11 +68,11 @@ func NewExecution(container *Container, args ...string) (*Execution, error) {
 		cmdArgs = args[1:]
 	}
 	return &Execution{
-		container:  container,
-		Path:       cmd,
-		Args:       cmdArgs,
-		context:    ctx,
-		isStarted:  false,
+		container: container,
+		Path:      cmd,
+		Args:      cmdArgs,
+		context:   ctx,
+		isStarted: false,
 	}, nil
 }
 
