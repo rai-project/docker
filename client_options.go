@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"github.com/Unknwon/com"
-	"github.com/docker/docker/cli/command"
 	"github.com/docker/go-connections/tlsconfig"
 )
 
@@ -16,9 +15,9 @@ type ClientOptions struct {
 	host       string
 	tlsConfig  *tls.Config
 	apiVersion string
-	stderr     *command.OutStream
-	stdout     *command.OutStream
-	stdin      *command.InStream
+	stderr     *OutStream
+	stdout     *OutStream
+	stdin      *InStream
 	context    context.Context
 }
 
@@ -28,8 +27,8 @@ func NewClientOptions() *ClientOptions {
 	opts := &ClientOptions{
 		host:       Config.Host,
 		apiVersion: Config.APIVersion,
-		stderr:     command.NewOutStream(ioutil.Discard),
-		stdout:     command.NewOutStream(ioutil.Discard),
+		stderr:     NewOutStream(ioutil.Discard),
+		stdout:     NewOutStream(ioutil.Discard),
 		stdin:      nil,
 		context:    context.Background(),
 	}
@@ -77,11 +76,11 @@ func Stderr(stderr io.Writer) ClientOption {
 			o.stderr = nil
 			return
 		}
-		if s, ok := stderr.(*command.OutStream); ok {
+		if s, ok := stderr.(*OutStream); ok {
 			o.stderr = s
 			return
 		}
-		o.stderr = command.NewOutStream(stderr)
+		o.stderr = NewOutStream(stderr)
 	}
 }
 
@@ -91,11 +90,11 @@ func Stdout(stdout io.Writer) ClientOption {
 			o.stdout = nil
 			return
 		}
-		if s, ok := stdout.(*command.OutStream); ok {
+		if s, ok := stdout.(*OutStream); ok {
 			o.stdout = s
 			return
 		}
-		o.stdout = command.NewOutStream(stdout)
+		o.stdout = NewOutStream(stdout)
 	}
 }
 
@@ -105,10 +104,10 @@ func Stdin(stdin io.Reader) ClientOption {
 			o.stdin = nil
 			return
 		}
-		if s, ok := stdin.(*command.InStream); ok {
+		if s, ok := stdin.(*InStream); ok {
 			o.stdin = s
 			return
 		}
-		o.stdin = command.NewInStream(ioutil.NopCloser(stdin))
+		o.stdin = NewInStream(ioutil.NopCloser(stdin))
 	}
 }

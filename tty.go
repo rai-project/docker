@@ -6,9 +6,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
 	"github.com/docker/docker/pkg/signal"
 	"github.com/docker/docker/pkg/term"
 	"github.com/pkg/errors"
@@ -35,14 +33,14 @@ func resizeTty(c *Container, e *Execution, height, width uint, isExec bool) {
 	}
 
 	if err != nil {
-		logrus.WithError(err).Debug("resize error")
+		log.WithError(err).Debug("resize error")
 	}
 }
 
 func monitorTtySize(c *Container, e *Execution, isExec bool) error {
 	stdin := c.client.options.stdin
 	if isExec && e.Stdin != nil {
-		if s, ok := e.Stdin.(*command.InStream); ok {
+		if s, ok := e.Stdin.(*InStream); ok {
 			stdin = s
 		}
 	}
@@ -122,7 +120,7 @@ func (c *Container) ForwardAllSignals() chan os.Signal {
 			}
 
 			if err := c.killWithSignal(sig); err != nil {
-				logrus.WithError(err).Debug("sending signal")
+				log.WithError(err).Debug("sending signal")
 			}
 		}
 	}()

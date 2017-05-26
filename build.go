@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
-	"github.com/docker/docker/cli/command/image/build"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/progress"
 	"github.com/docker/docker/pkg/streamformatter"
@@ -24,16 +22,16 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 	// Setup an upload progress bar
 	stdout := c.options.stdout
 	if stdout == nil {
-		stdout = command.NewOutStream(ioutil.Discard)
+		stdout = NewOutStream(ioutil.Discard)
 	}
 	stderr := c.options.stderr
 	if stderr == nil {
-		stderr = command.NewOutStream(ioutil.Discard)
+		stderr = NewOutStream(ioutil.Discard)
 	}
 
 	progressOutput := streamformatter.NewProgressOutput(streamformatter.NewStdoutWriter(stdout))
 
-	buildCtx, _, err := build.GetContextFromReader(ioutil.NopCloser(dockerReader), "Dockerfile")
+	buildCtx, _, err := getContextFromReader(ioutil.NopCloser(dockerReader), "Dockerfile")
 	if err != nil {
 		return err
 	}

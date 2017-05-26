@@ -7,14 +7,13 @@ import (
 	"sync"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/cli/command"
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/pkg/errors"
 )
 
 // holdHijackedConnection handles copying input to and output from streams to the
 // connection
-func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bool,
+func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
 	resp types.HijackedResponse) error {
 	var (
@@ -95,14 +94,14 @@ func holdHijackedConnection(ctx context.Context, streams command.Streams, tty bo
 	return nil
 }
 
-func setRawTerminal(streams command.Streams) error {
+func setRawTerminal(streams Streams) error {
 	if err := streams.In().SetRawTerminal(); err != nil {
 		return err
 	}
 	return streams.Out().SetRawTerminal()
 }
 
-func restoreTerminal(streams command.Streams, in io.Closer) error {
+func restoreTerminal(streams Streams, in io.Closer) error {
 	streams.In().RestoreTerminal()
 	streams.Out().RestoreTerminal()
 	// WARNING: DO NOT REMOVE THE OS CHECK !!!
@@ -113,28 +112,4 @@ func restoreTerminal(streams command.Streams, in io.Closer) error {
 		return in.Close()
 	}
 	return nil
-}
-
-type stream struct {
-	stdin  io.ReadCloser
-	stdout io.Writer
-	stderr io.Writer
-}
-
-func (s *stream) In() *command.InStream {
-	if s.stdin == nil {
-		return nil
-	}
-	return command.NewInStream(s.stdin)
-}
-
-func (s *stream) Out() *command.OutStream {
-	if s.stdout == nil {
-		return nil
-	}
-	return command.NewOutStream(s.stdout)
-}
-
-func (s *stream) Err() io.Writer {
-	return s.stderr
 }
