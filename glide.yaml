@@ -13,7 +13,7 @@ import:
   subpackages:
   - reference
 - package: github.com/docker/docker
-  version: 17.5.0-ce
+  version: master
   subpackages:
   - api
   - api/types
