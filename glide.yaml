@@ -45,7 +45,7 @@ import:
 - package: github.com/k0kubun/pp
   version: ~2.3.0
 - package: github.com/opencontainers/runc
-  version: master
+  version: ~1.0.0-rc3
   subpackages:
   - libcontainer/user
 - package: github.com/patrickmn/go-cache
