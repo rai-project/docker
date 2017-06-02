@@ -4,12 +4,14 @@ import:
   version: ~0.11.5
 - package: github.com/Unknwon/com
   version: ~1.0.0
+- package: github.com/boltdb/bolt
+  version: ~1.3.0
 - package: github.com/carlescere/scheduler
   version: master
 - package: github.com/cenkalti/backoff
   version: ~1.0.0
 - package: github.com/docker/distribution
-  version: master
+  version: ~2.6.1
   subpackages:
   - reference
 - package: github.com/docker/docker
@@ -56,6 +58,9 @@ import:
 - package: github.com/rai-project/ldcache
 - package: github.com/rai-project/logger
 - package: github.com/rai-project/nvidia-smi
+- package: github.com/rai-project/store
+  subpackages:
+  - s3
 - package: github.com/rai-project/vipertags
 - package: github.com/satori/go.uuid
   version: ~1.1.0
