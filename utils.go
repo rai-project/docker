@@ -1,7 +1,9 @@
 package docker
 
 import (
+	"archive/tar"
 	"bufio"
+	"bytes"
 	"io"
 	"io/ioutil"
 	"os"
@@ -15,7 +17,22 @@ import (
 const (
 	// DefaultDockerfileName is the Default filename with Docker commands, read by docker build
 	DefaultDockerfileName string = "Dockerfile"
+
+	// HeaderSize is the size in bytes of a tar header
+	HeaderSize = 512
 )
+
+// IsArchive checks for the magic bytes of a tar or any supported compression
+// algorithm.
+func IsArchive(header []byte) bool {
+	compression := archive.DetectCompression(header)
+	if compression != Uncompressed {
+		return true
+	}
+	r := tar.NewReader(bytes.NewBuffer(header))
+	_, err := r.Next()
+	return err == nil
+}
 
 // getContextFromReader will read the contents of the given reader as either a
 // Dockerfile or tar archive. Returns a tar archive used as a context and a
@@ -23,12 +40,12 @@ const (
 func getContextFromReader(r io.ReadCloser, dockerfileName string) (out io.ReadCloser, relDockerfile string, err error) {
 	buf := bufio.NewReader(r)
 
-	magic, err := buf.Peek(archive.HeaderSize)
+	magic, err := buf.Peek(HeaderSize)
 	if err != nil && err != io.EOF {
 		return nil, "", errors.Errorf("failed to peek context header from STDIN: %v", err)
 	}
 
-	if archive.IsArchive(magic) {
+	if IsArchive(magic) {
 		return ioutils.NewReadCloserWrapper(buf, func() error { return r.Close() }), dockerfileName, nil
 	}
 
