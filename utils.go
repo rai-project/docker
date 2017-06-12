@@ -26,7 +26,7 @@ const (
 // algorithm.
 func IsArchive(header []byte) bool {
 	compression := archive.DetectCompression(header)
-	if compression != Uncompressed {
+	if compression != archive.Uncompressed {
 		return true
 	}
 	r := tar.NewReader(bytes.NewBuffer(header))
