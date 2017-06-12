@@ -33,6 +33,10 @@ import:
   - pkg/stdcopy
   - pkg/streamformatter
   - pkg/term
+- package: github.com/docker/go-connections
+  version: master
+  subpackages:
+  - tlsconfig
 - package: github.com/docker/go-plugins-helpers
   subpackages:
   - volume

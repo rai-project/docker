@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/Unknwon/com"
-	"github.com/docker/docker/pkg/tlsconfig"
+	"github.com/docker/go-connections/tlsconfig"
 )
 
 type ClientOptions struct {
