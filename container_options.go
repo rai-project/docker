@@ -291,19 +291,22 @@ func NvidiaVolume(version string) ContainerOption {
 			version = nvidiasmi.Info.DriverVersion
 		}
 		//o.hostConfig.VolumeDriver = "rai-cuda"
+		name := "rai-cuda"
+		versionedName := name + "_" + version
+		_ = versionedName
 		o.hostConfig.Mounts = append(
 			o.hostConfig.Mounts,
 			mount.Mount{
 				Type:     mount.TypeVolume,
-				Source:   "rai-cuda_" + version,
+				Source:   versionedName,
 				Target:   "/usr/local/nvidia",
 				ReadOnly: true,
 				VolumeOptions: &mount.VolumeOptions{
 					Labels: map[string]string{
-						"name": "rai-cuda_" + version,
+						"name": versionedName,
 					},
 					DriverConfig: &mount.Driver{
-						Name: "rai-cuda",
+						Name: name,
 					},
 				},
 			},

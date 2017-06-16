@@ -15,15 +15,15 @@ import (
 type CUDADriver struct{}
 
 func getVolume(name string) (*Volume, string, error) {
-	pp.Println("volume name = " + name)
 	re := regexp.MustCompile("^([a-zA-Z0-9_.-]+)_([0-9.]+)$")
 	m := re.FindStringSubmatch(name)
-	if len(m) == 2 && nvidiasmi.HasGPU {
+	if false && len(m) == 2 && nvidiasmi.HasGPU {
 		return getVolume(name + "_" + nvidiasmi.Info.DriverVersion)
 	}
 	if len(m) != 3 {
 		return nil, "", errors.Errorf("%v is not a valid volume format", name)
 	}
+	pp.Println("volume = ", m[1], " version = ", m[2])
 	volume, version := VolumeMap[m[1]], m[2]
 	if volume == nil {
 		return nil, "", errors.Errorf("%v volume is not supported", m[1])
