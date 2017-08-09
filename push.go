@@ -53,37 +53,4 @@ func (c *Client) ImagePush(name0 string, pubOpts model.Publish, dockerReader io.
 	authStr := base64.URLEncoding.EncodeToString(encodedJSON)
 
 	return c.Client.ImagePush(c.options.context, name, types.ImagePushOptions{RegistryAuth: authStr})
-
-	// pp.Println(authOk)
-
-	// indexServer := pubOpts.Registry
-	// if indexServer == "" {
-	// 	indexServer = registry.IndexServer
-	// }
-
-	// indexInfo, err := registry.ParseSearchIndexInfo(indexServer)
-	// if err != nil {
-	// 	return nil, errors.Wrapf(err, "unable to parse the search index info for %s", indexServer)
-	// }
-
-	// pp.Println(indexInfo)
-
-	// resolved := registry.ResolveAuthConfig(
-	// 	map[string]types.AuthConfig{
-	// 		indexServer: auth,
-	// 	},
-	// 	&registrytypes.IndexInfo{
-	// 		Name:     indexServer,
-	// 		Official: true,
-	// 	},
-	// )
-
-	// registry.NewSession()
-	// cred := registry.NewStaticCredentialStore(auth)
-	// cred.Basic(*url.URL)
-	// resolved := registry.ResolveAuthConfig(authConfigs, index)
-	// c.Client.ImagePush(c.options.context, name, types.ImagePushOptions{
-	//   RegistryAuth: auth.IdentityToken,
-	// })
-	return nil, nil
 }
