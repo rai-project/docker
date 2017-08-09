@@ -11,7 +11,7 @@ import (
 	"github.com/rai-project/model"
 )
 
-func (c *Client) ImagePush(name0 string, pubOpts model.Publish, dockerReader io.Reader) (io.ReadCloser, error) {
+func (c *Client) ImagePush(name0 string, pushOpts model.Push, dockerReader io.Reader) (io.ReadCloser, error) {
 	name, err := parseImageName(name0)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse the image name %v", name0)
@@ -19,8 +19,8 @@ func (c *Client) ImagePush(name0 string, pubOpts model.Publish, dockerReader io.
 
 	log.WithField("image_name", name).Debug("publishing to docker repository")
 
-	username := pubOpts.Credentials.Username
-	password := pubOpts.Credentials.Password
+	username := pushOpts.Credentials.Username
+	password := pushOpts.Credentials.Password
 	email := ""
 	if strings.Contains(username, "@") {
 		email = username
@@ -32,7 +32,7 @@ func (c *Client) ImagePush(name0 string, pubOpts model.Publish, dockerReader io.
 		Email:    email,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to login registry using username = %s", pubOpts.Credentials.Username)
+		return nil, errors.Wrapf(err, "unable to login registry using username = %s", username)
 	}
 
 	if authOk.Status == "" {
