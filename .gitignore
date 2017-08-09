@@ -39,3 +39,6 @@ cmd/rai/rai
 cmd/raid/raid
 debug
 .DS_Store
+
+my_credentials.go
+push_test_info.go
