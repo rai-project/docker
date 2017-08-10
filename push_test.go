@@ -38,7 +38,7 @@ func (suite *PushTestSuite) TestAuthentication() {
 	t := suite.T()
 	client := suite.client
 
-	readCloser, err := client.ImagePush(testPushModel.ImageName, testPushModel, client.options.stdin)
+	readCloser, err := client.ImagePush(testPushModel.ImageName, testPushModel)
 	if !assert.NoError(t, err, "Failed to push image") {
 		return
 	}

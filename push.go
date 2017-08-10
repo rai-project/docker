@@ -11,7 +11,7 @@ import (
 	"github.com/rai-project/model"
 )
 
-func (c *Client) ImagePush(name0 string, pushOpts model.Push, dockerReader io.Reader) (io.ReadCloser, error) {
+func (c *Client) ImagePush(name0 string, pushOpts model.Push) (io.ReadCloser, error) {
 	name, err := parseImageName(name0)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse the image name %v", name0)
