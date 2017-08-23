@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"time"
 
-	 "github.com/docker/docker/api/types"
-	 "github.com/docker/docker/pkg/jsonmessage"
-	 "github.com/docker/docker/pkg/progress"
-	 "github.com/docker/docker/pkg/streamformatter"
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/progress"
+	"github.com/docker/docker/pkg/streamformatter"
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -17,7 +17,7 @@ var (
 	imageBuildCache *cache.Cache
 )
 
-func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
+func (c *Client) ImageBuild(name string, dockerfilePath string, archiveReader io.Reader) error {
 
 	// Setup an upload progress bar
 	stdout := c.options.stdout
@@ -31,7 +31,7 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 
 	progressOutput := streamformatter.NewProgressOutput(streamformatter.NewStdoutWriter(stdout))
 
-	buildCtx, _, err := getContextFromReader(ioutil.NopCloser(dockerReader), "Dockerfile")
+	buildCtx, _, err := getContextFromReader(ioutil.NopCloser(archiveReader), dockerfilePath)
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,8 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 	var body io.Reader = progress.NewProgressReader(buildCtx, progressOutput, 0, "", "Sending build context to Docker daemon")
 
 	buildOptions := types.ImageBuildOptions{
-		Tags: []string{name},
+		Dockerfile: dockerfilePath,
+		Tags:       []string{name},
 	}
 
 	response, err := c.Client.ImageBuild(c.options.context, body, buildOptions)
@@ -61,14 +62,14 @@ func (c *Client) ImageBuild(name string, dockerReader io.Reader) error {
 
 func (c *Client) ImageBuildCached(name string, dockerReader io.Reader) error {
 	if imageBuildCache == nil {
-		return c.ImageBuild(name, dockerReader)
+		return c.ImageBuild(name, "Dockerfile", dockerReader)
 	}
 
 	if _, found := imageBuildCache.Get(name); found {
 		return nil
 	}
 
-	err := c.ImageBuild(name, dockerReader)
+	err := c.ImageBuild(name, "Dockerfile", dockerReader)
 	if err != nil {
 		return err
 	}

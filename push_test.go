@@ -1,8 +1,6 @@
 package docker
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -11,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var testPushModel model.Publish
+var testPushModel model.Push
 
 type PushTestSuite struct {
 	suite.Suite
@@ -38,23 +36,10 @@ func (suite *PushTestSuite) TestAuthentication() {
 	t := suite.T()
 	client := suite.client
 
-	readCloser, err := client.ImagePush(testPushModel.ImageName, testPushModel)
+	err := client.ImagePush(testPushModel.ImageName, testPushModel)
 	if !assert.NoError(t, err, "Failed to push image") {
 		return
 	}
-	if !assert.NotNil(t, readCloser, "Returned valid readCloser") {
-		return
-	}
-
-	defer readCloser.Close()
-
-	bts, err := ioutil.ReadAll(readCloser)
-	if !assert.NoError(t, err, "Failed to read push output") {
-		return
-	}
-	assert.NotEmpty(t, bts, "empty push output")
-
-	fmt.Println(string(bts))
 }
 
 func TestPush(t *testing.T) {
