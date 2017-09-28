@@ -28,7 +28,6 @@ import:
   - pkg/ioutils
   - pkg/jsonmessage
   - pkg/progress
-  - pkg/promise
   - pkg/signal
   - pkg/stdcopy
   - pkg/streamformatter
@@ -54,6 +53,9 @@ import:
   version: ~2.0.0
 - package: github.com/pkg/errors
   version: ~0.8.0
+- package: github.com/rai-project/utils
+  subpackages:
+  - promise
 - package: github.com/rai-project/config
 - package: github.com/rai-project/ldcache
 - package: github.com/rai-project/logger

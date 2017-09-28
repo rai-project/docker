@@ -10,9 +10,9 @@ import (
 
 	"github.com/cenkalti/backoff"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/pkg/promise"
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/pkg/errors"
+	"github.com/rai-project/utils/promise"
 )
 
 type Execution struct {

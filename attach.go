@@ -4,8 +4,8 @@ import (
 	"net/http/httputil"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/pkg/promise"
 	"github.com/pkg/errors"
+	"github.com/rai-project/utils/promise"
 )
 
 func (c *Container) Attach() error {
