@@ -14,7 +14,7 @@ import (
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/rai-project/uuid"
 )
 
 type ContainerOptions struct {
