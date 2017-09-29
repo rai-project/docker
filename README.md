@@ -29,5 +29,3 @@ docker:
     TERM: xterm
 
 ~~~
-
-Test
