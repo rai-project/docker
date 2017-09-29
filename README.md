@@ -1,4 +1,4 @@
-# rai-project/docker [![Build Status](https://travis-ci.org/rai-project/docker.svg?branch=master)](https://travis-ci.org/rai-project/docker)
+﻿# rai-project/docker [![Build Status](https://travis-ci.org/rai-project/docker.svg?branch=master)](https://travis-ci.org/rai-project/docker)
 
 Docker uses [rai-project/config](https://github.com/rai-project/config) for configuration.
 The docker section of the configuration file should be written according to [config.go]().
@@ -29,3 +29,5 @@ docker:
     TERM: xterm
 
 ~~~
+
+Test
