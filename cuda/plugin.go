@@ -12,7 +12,9 @@ import (
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 )
 
-type CUDADriver struct{}
+type CUDADriver struct{
+  d volume.Driver
+}
 
 func getVolume(name string) (*Volume, string, error) {
 	re := regexp.MustCompile("^([a-zA-Z0-9_.-]+)_([0-9.]+)$")
@@ -44,31 +46,31 @@ func (CUDADriver) Create(req *volume.CreateRequest) *volume.ErrorResponse {
 	if !ok {
 		vol.Create(LinkStrategy{})
 	}
-	return volume.NewErrorResponse("")
+	return nil
 }
 
-func (CUDADriver) List(req *volume.ListResponse, e *volume.ErrorResponse) {
-	
-	for _, vol := range VolumeMap {
+func (d *CUDADriver) List() (*volume.ListResponse, error) {
+  var req volume.ListResponse
+
+  for _, vol := range VolumeMap {
 		versions, err := vol.ListVersions()
 		if err != nil {
-			e.Err = "failed to get volume " + vol.Name + "version information"
+      return &req, err
 			continue
 		}
 		for _, v := range versions {
 			req.Volumes = append(req.Volumes, &volume.Volume{
 				Name:       fmt.Sprintf("%s_%s", vol.Name, v),
-				Mountpoint: path.Join(vol.Path, v),
-        /* Status map[string]interface{} - Not sure what to put here */
-			})
+				Mountpoint: path.Join(vol.Path, v)})
 		}
 	}
+  return &req, nil
 }
 
-func (CUDADriver) Get(req *volume.GetRequest) (*volume.GetResponse, *volume.ErrorResponse) {
+func (d *CUDADriver) Get(req *volume.GetRequest) (*volume.GetResponse, *volume.ErrorResponse) {
   var gr volume.GetResponse
 	vol, version, err := getVolume(req.Name)
-  gr.Volume = vol
+  /*gr.Volume = vol*/
 	if err != nil {
     return &gr, volume.NewErrorResponse("unable to get volume" +  req.Name)
 	}
@@ -83,7 +85,7 @@ func (CUDADriver) Get(req *volume.GetRequest) (*volume.GetResponse, *volume.Erro
 	if !ok {
 		return &gr, volume.NewErrorResponse("volume " + vol.Name + " was not found")
 	}
-	return &gr, volume.NewErrorResponse("")
+	return &volume.GetResponse{}, nil
 }
 
 func (CUDADriver) Remove(req *volume.RemoveRequest) *volume.ErrorResponse {
@@ -152,7 +154,7 @@ func (CUDADriver) Capabilities() *volume.CapabilitiesResponse {
 func Serve() {
 	d := CUDADriver{}
 
-	h := volume.NewHandler(d) /*Not sure how to get driver*/
+	h := volume.NewHandler(d.d) /*Not sure how to get driver*/
 	log.Debug("starting to create a rai-cuda new volume handler")
 	gid, err := lookupGidByName("docker")
 	if err != nil {
