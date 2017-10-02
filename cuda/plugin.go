@@ -31,153 +31,128 @@ func getVolume(name string) (*Volume, string, error) {
 	return volume, version, nil
 }
 
-func (CUDADriver) Create(req volume.Request) volume.Response {
-	vol, version, err := getVolume(req.Name)
+func (CUDADriver) Create(req *volume.CreateRequest) *volume.ErrorResponse {
+  vol, version, err := getVolume(req.Name)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "failed to create %v volume", req.Name).Error(),
-		}
+	  return volume.NewErrorResponse("failed to create " + req.Name + " volume.")
 	}
 	// The volume version requested needs to match the volume version in cache
 	if version != vol.Version {
-		return volume.Response{
-			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
-		}
+		return volume.NewErrorResponse("volume mismatch " + version + " != " + vol.Version)
 	}
 	ok, err := vol.Exists()
 	if !ok {
 		vol.Create(LinkStrategy{})
 	}
-	return volume.Response{}
+	return volume.NewErrorResponse("")
 }
 
-func (CUDADriver) List(req volume.Request) volume.Response {
-	var r volume.Response
+func (CUDADriver) List(req *volume.ListResponse, e *volume.ErrorResponse) {
+	
 	for _, vol := range VolumeMap {
 		versions, err := vol.ListVersions()
 		if err != nil {
-			log.WithError(err).Error("failed to get volume %v version information", vol.Name)
+			e.Err = "failed to get volume " + vol.Name + "version information"
 			continue
 		}
 		for _, v := range versions {
-			r.Volumes = append(r.Volumes, &volume.Volume{
+			req.Volumes = append(req.Volumes, &volume.Volume{
 				Name:       fmt.Sprintf("%s_%s", vol.Name, v),
 				Mountpoint: path.Join(vol.Path, v),
+        /* Status map[string]interface{} - Not sure what to put here */
 			})
 		}
 	}
-	return r
 }
 
-func (CUDADriver) Get(req volume.Request) volume.Response {
+func (CUDADriver) Get(req *volume.GetRequest) (*volume.GetResponse, *volume.ErrorResponse) {
+  var gr volume.GetResponse
 	vol, version, err := getVolume(req.Name)
+  gr.Volume = vol
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
-		}
+    return &gr, volume.NewErrorResponse("unable to get volume" +  req.Name)
 	}
 	// The volume version requested needs to match the volume version in cache
 	if version != vol.Version {
-		return volume.Response{
-			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
-		}
+		return &gr, volume.NewErrorResponse("volume version mismatch" + version + " != " + vol.Version)
 	}
 	ok, err := vol.Exists(version)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to check if volme %v exists", vol.Name).Error(),
-		}
+		return &gr, volume.NewErrorResponse("unable to check if volume" + vol.Name + "exists")
 	}
 	if !ok {
-		return volume.Response{
-			Err: errors.Errorf("volume %v was not found", vol.Name).Error(),
-		}
+		return &gr, volume.NewErrorResponse("volume " + vol.Name + " was not found")
 	}
-	return volume.Response{
-		Volume: &volume.Volume{
-			Name:       vol.Name,
-			Mountpoint: path.Join(vol.Path, version),
-		},
-	}
+	return &gr, volume.NewErrorResponse("")
 }
 
-func (CUDADriver) Remove(req volume.Request) volume.Response {
+func (CUDADriver) Remove(req *volume.RemoveRequest) *volume.ErrorResponse {
 	vol, version, err := getVolume(req.Name)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
-		}
+		return volume.NewErrorResponse("unable to get volume" + req.Name)
 	}
 	// The volume version requested needs to match the volume version in cache
 	if version != vol.Version {
-		return volume.Response{
-			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
-		}
+		return volume.NewErrorResponse("volume version mismatch " + version + " != " + vol.Version)
 	}
 	err = vol.Remove(version)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to remove volume %v", vol.Name).Error(),
-		}
+		return volume.NewErrorResponse("unable to remove volume " + vol.Name)
 	}
-	return volume.Response{}
+	return volume.NewErrorResponse("")
 }
 
-func (c CUDADriver) Path(req volume.Request) volume.Response {
-	return c.Mount(volume.MountRequest{Name: req.Name})
+func (c CUDADriver) Path(req *volume.PathRequest) (*volume.PathResponse, *volume.ErrorResponse) {
+  var pr volume.PathResponse
+
+  mr, err := c.Mount(&volume.MountRequest{Name: req.Name, ID: "0"}) /*Not sure what ID to put here*/
+  
+	return &pr, volume.NewErrorResponse("")
 }
 
-func (CUDADriver) Mount(req volume.MountRequest) volume.Response {
+func (CUDADriver) Mount(req *volume.MountRequest) (*volume.MountResponse, *volume.ErrorResponse) {
+  var mr volume.MountResponse
+
 	vol, version, err := getVolume(req.Name)
+  mr.Mountpoint = vol.Mountpoint
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
-		}
+		return &mr, volume.NewErrorResponse("unable to get volume " + req.Name)
 	}
 	// The volume version requested needs to match the volume version in cache
 	if version != vol.Version {
-		return volume.Response{
-			Err: errors.Errorf("volume version mismatch %v != %v", version, vol.Version).Error(),
-		}
+		return &mr, volume.NewErrorResponse("volume version mismatch " + version + " != " + vol.Version)
 	}
 	ok, err := vol.Exists(version)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to check if volme %v exists", vol.Name).Error(),
-		}
+		return &mr, volume.NewErrorResponse("unable to check if volme " + vol.Name +" exists")
 	}
 	if !ok {
-		return volume.Response{
-			Err: errors.Errorf("volume %v was not found", vol.Name).Error(),
-		}
+		return &mr, volume.NewErrorResponse("volume " + vol.Name + " was not found")
 	}
-	return volume.Response{
-		Mountpoint: path.Join(vol.Path, version),
-	}
+	return &mr, volume.NewErrorResponse("")
 }
 
-func (CUDADriver) Unmount(req volume.UnmountRequest) volume.Response {
+func (CUDADriver) Unmount(req *volume.UnmountRequest) *volume.ErrorResponse {
 	_, _, err := getVolume(req.Name)
 	if err != nil {
-		return volume.Response{
-			Err: errors.Wrapf(err, "unable to get volume %v", req.Name).Error(),
-		}
+		return volume.NewErrorResponse("unable to get volume " + req.Name)
 	}
-	return volume.Response{}
+	return volume.NewErrorResponse("")
 }
 
-func (CUDADriver) Capabilities(req volume.Request) volume.Response {
-	return volume.Response{
-		Capabilities: volume.Capability{
+func (CUDADriver) Capabilities() *volume.CapabilitiesResponse {
+  var cr volume.CapabilitiesResponse
+
+  cr.Capabilities = volume.Capability{
 			Scope: "local",
-		},
-	}
+		}
+  return &cr
 }
 
 func Serve() {
 	d := CUDADriver{}
 
-	h := volume.NewHandler(d)
+	h := volume.NewHandler(d) /*Not sure how to get driver*/
 	log.Debug("starting to create a rai-cuda new volume handler")
 	gid, err := lookupGidByName("docker")
 	if err != nil {
