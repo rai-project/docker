@@ -42,3 +42,6 @@ debug
 
 my_credentials.go
 push_test_info.go
+
+vendor
+glide.lock

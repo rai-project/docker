@@ -170,10 +170,23 @@ func (e *Execution) Start() error {
 
 	e.execID = execID.ID
 
+	startOpts := types.ExecStartCheck{
+		Detach: true,
+		Tty:    isTty,
+	}
+	err = client.ContainerExecStart(
+		e.context,
+		e.execID,
+		startOpts,
+	)
+	if err != nil {
+		return errors.Wrapf(err,
+			"cannot start execution %v in container", strings.Join(cmd, " "))
+	}
 	resp, errAttach := client.ContainerExecAttach(
 		e.context,
 		e.execID,
-		execOpts,
+		startOpts,
 	)
 	if errAttach != nil && errAttach != httputil.ErrPersistEOF {
 		// ContainerAttach returns an ErrPersistEOF (connection closed)

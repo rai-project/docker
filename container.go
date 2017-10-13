@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types"
-	"github.com/k0kubun/pp"
 )
 
 type Container struct {
@@ -73,7 +72,6 @@ func (c *Container) Info() (types.ContainerJSON, error) {
 	if err != nil {
 		return types.ContainerJSON{}, err
 	}
-	pp.Println(info)
 	return info, nil
 }
 

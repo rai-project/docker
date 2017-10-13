@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"runtime"
 	"strconv"
 	"time"
 
@@ -14,7 +15,7 @@ import (
 
 type dockerConfig struct {
 	TimeLimit         time.Duration     `json:"time_limit" config:"docker.time_limit" default:"1h"`
-	Image             string            `json:"image" config:"docker.image" default:"ubuntu"`
+	Image             string            `json:"image" config:"docker.image"`
 	Username          string            `json:"username" config:"docker.username" default:"root"`
 	MemoryLimitString string            `json:"memory_limit" config:"docker.memory_limit" default:"16gb"`
 	MemoryLimit       int64             `json:"-" config:"-"`
@@ -48,6 +49,13 @@ func (a *dockerConfig) Read() {
 			a.MemoryLimit = int64(bts)
 		} else if bts, err := strconv.ParseInt(a.MemoryLimitString, 10, 0); err == nil {
 			a.MemoryLimit = bts
+		}
+	}
+	if a.Image == "" {
+		if runtime.GOOS == "ppc64lele" {
+			a.Image = "ppc64le/debian:jessie"
+		} else {
+			a.Image = "ubuntu"
 		}
 	}
 	if a.Host == "" || a.Host == "default" {

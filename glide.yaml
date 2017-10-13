@@ -1,15 +1,13 @@
 package: github.com/rai-project/docker
 import:
-- package: github.com/sirupsen/logrus
-  version: ^1.0.0
 - package: github.com/Unknwon/com
   version: ^1.0.0
 - package: github.com/boltdb/bolt
-  version: ~1.3.0
+  version: ^1.3.1
 - package: github.com/carlescere/scheduler
   version: master
 - package: github.com/cenkalti/backoff
-  version: ^1.0.0
+  version: ^1.1.0
 - package: github.com/docker/distribution
   version: master
   subpackages:
@@ -37,37 +35,40 @@ import:
   subpackages:
   - tlsconfig
 - package: github.com/docker/go-plugins-helpers
+  version: master
   subpackages:
   - volume
 - package: github.com/dustin/go-humanize
 - package: github.com/imdario/mergo
-  version: ~0.2.2
+  version: ^0.2.4
 - package: github.com/junegunn/go-shellwords
 - package: github.com/k0kubun/pp
   version: ~2.3.0
 - package: github.com/opencontainers/runc
-  version: ^1.0.0-rc3
+  version: ^1.0.0-rc4
   subpackages:
   - libcontainer/user
 - package: github.com/patrickmn/go-cache
   version: ~2.0.0
 - package: github.com/pkg/errors
   version: ~0.8.0
-- package: github.com/rai-project/utils
-  subpackages:
-  - promise
 - package: github.com/rai-project/config
 - package: github.com/rai-project/ldcache
 - package: github.com/rai-project/logger
+- package: github.com/rai-project/model
 - package: github.com/rai-project/nvidia-smi
 - package: github.com/rai-project/store
   subpackages:
   - s3
+- package: github.com/rai-project/utils
+  subpackages:
+  - promise
+- package: github.com/rai-project/uuid
 - package: github.com/rai-project/vipertags
-- package: github.com/satori/go.uuid
-  version: ~1.1.0
-testImport:
+- package: github.com/sirupsen/logrus
+  version: ^1.0.3
 - package: github.com/stretchr/testify
+  version: ~1.1.4
   subpackages:
   - assert
   - suite
