@@ -3,7 +3,10 @@ package docker
 import (
 	"bytes"
 	"os"
+	"sort"
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -47,7 +50,7 @@ func (suite *ExecTestSuite) TestRun() {
 	err = cont.Start()
 	assert.NoError(t, err)
 
-	exec, err := NewExecution(cont, "/bin/sh", "-c", "ls", "-l", "/")
+	exec, err := NewExecution(cont, "ls", "/")
 
 	assert.NoError(t, err)
 	assert.NotNil(t, exec)
@@ -62,7 +65,32 @@ func (suite *ExecTestSuite) TestRun() {
 	assert.Empty(t, stderr.Bytes())
 	assert.NotEmpty(t, stdout.Bytes())
 
-	assert.Equal(t, stdout.String(), "bin   dev  home  lib64\tmnt  proc  run\t srv  tmp  var\r\nboot  etc  lib\t media\topt  root  sbin  sys  usr\r\n")
+	out := stdout.String()
+	dirs := strings.FieldsFunc(out, unicode.IsSpace)
+	sort.Strings(dirs)
+	expected := []string{
+		"bin",
+		"boot",
+		"build",
+		"dev",
+		"etc",
+		"home",
+		"lib",
+		"lib64",
+		"media",
+		"mnt",
+		"opt",
+		"proc",
+		"root",
+		"run",
+		"sbin",
+		"srv",
+		"sys",
+		"tmp",
+		"usr",
+		"var",
+	}
+	assert.Equal(t, dirs, expected)
 
 }
 

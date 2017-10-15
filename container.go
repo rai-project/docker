@@ -80,7 +80,7 @@ func (c *Container) Close() error {
 }
 
 func (c *Container) Stop() error {
-	c.options.cancelFunc()
+	defer c.options.cancelFunc()
 	if !c.isStarted {
 		return nil
 	}
@@ -112,8 +112,8 @@ func (c *Container) remove() error {
 		c.ID,
 		types.ContainerRemoveOptions{
 			RemoveVolumes: true,
-			RemoveLinks:   true,
-			Force:         true,
+			// RemoveLinks:   true,
+			Force: true,
 		},
 	)
 	return err
