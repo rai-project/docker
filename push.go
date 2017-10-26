@@ -20,9 +20,6 @@ func (c *Client) ImagePush(name0 string, pushOpts model.Push) error {
 				return val
 			}
 		}
-		if r, err := base64.StdEncoding.DecodeString(s); err == nil {
-			return string(r)
-		}
 		return s
 	}
 

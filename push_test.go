@@ -42,7 +42,7 @@ func (suite *PushTestSuite) TestAuthentication() {
 	}
 }
 
-func DISABLED_TestPush(t *testing.T) {
+func TestPush(t *testing.T) {
 	c, err := NewPushTestSuite(t)
 	if !assert.NoError(t, err, "Failed to create docker Push test suite") {
 		return
