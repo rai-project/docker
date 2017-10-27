@@ -3,6 +3,7 @@ package cuda
 import (
 	"fmt"
 	"path"
+	"path/filepath"
 	"regexp"
 
 	"github.com/docker/go-plugins-helpers/volume"
@@ -48,12 +49,12 @@ func (CUDADriver) Create(req *volume.CreateRequest) error {
 }
 
 func (CUDADriver) List() (*volume.ListResponse, error) {
-	var lres *volume.ListResponse
+	lres := new(volume.ListResponse)
 
 	for _, vol := range VolumeMap {
 		versions, err := vol.ListVersions()
 		if err != nil {
-      return &volume.ListResponse{}, errors.Errorf("failed to get volume %v version information", vol.Name)
+			return &volume.ListResponse{}, errors.Errorf("failed to get volume %v version information", vol.Name)
 		}
 		for _, v := range versions {
 			lres.Volumes = append(lres.Volumes, &volume.Volume{
@@ -106,16 +107,16 @@ func (CUDADriver) Remove(req *volume.RemoveRequest) error {
 }
 
 func (c CUDADriver) Path(req *volume.PathRequest) (*volume.PathResponse, error) {
-  var pres *volume.PathResponse
-  
-  mres, err := c.Mount(&volume.MountRequest{Name: req.Name})
-  pres.Mountpoint = mres.Mountpoint
+	var pres *volume.PathResponse
 
-  return pres, err
+	mres, err := c.Mount(&volume.MountRequest{Name: req.Name})
+	pres.Mountpoint = mres.Mountpoint
+
+	return pres, err
 }
 
 func (c CUDADriver) Mount(req *volume.MountRequest) (*volume.MountResponse, error) {
-    vol, version, err := getVolume(req.Name)
+	vol, version, err := getVolume(req.Name)
 	if err != nil {
 		return &volume.MountResponse{}, errors.Wrapf(err, "unable to get volume %v", req.Name)
 	}
@@ -131,7 +132,7 @@ func (c CUDADriver) Mount(req *volume.MountRequest) (*volume.MountResponse, erro
 		return &volume.MountResponse{}, errors.Errorf("volume %v was not found", vol.Name)
 	}
 
-  return &volume.MountResponse{Mountpoint: vol.Path+":"+version}, nil
+	return &volume.MountResponse{Mountpoint: filepath.Join(vol.Path, version)}, nil
 }
 
 func (CUDADriver) Unmount(req *volume.UnmountRequest) error {
@@ -171,6 +172,6 @@ func lookupGidByName(group string) (int, error) {
 	grp, err := user.LookupGroup(group)
 	if err != nil {
 		return -1, err
-}
+	}
 	return grp.Gid, nil
 }
