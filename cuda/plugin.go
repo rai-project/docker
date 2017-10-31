@@ -18,13 +18,13 @@ type CUDADriver struct{}
 func getVolume(name string) (*Volume, string, error) {
 	re := regexp.MustCompile("^([a-zA-Z0-9_.-]+)_([0-9.]+)$")
 	m := re.FindStringSubmatch(name)
-	if false && len(m) == 2 && nvidiasmi.HasGPU {
+	if len(m) == 0 && nvidiasmi.HasGPU {
 		return getVolume(name + "_" + nvidiasmi.Info.DriverVersion)
 	}
 	if len(m) != 3 {
-		return nil, "", errors.Errorf("%v is not a valid volume format", name)
+		return nil, "", errors.Errorf("%v is not a valid volume format. %v", name, m)
 	}
-  if false {
+  if true {
     pp.Println("volume = ", m[1], " version = ", m[2])
   }
 	volume, version := VolumeMap[m[1]], m[2]
