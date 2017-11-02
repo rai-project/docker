@@ -5,6 +5,7 @@ import (
 
 	"github.com/carlescere/scheduler"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 )
 
 func cleanupDeadContainers() {
@@ -32,13 +33,31 @@ func cleanupDeadContainers() {
 				ctx,
 				img.ID,
 				types.ContainerRemoveOptions{
-					Force: true,
+					Force:         true,
+					RemoveVolumes: true,
 				},
 			)
 		}
 	}
 }
 
+func cleanupDeadVolumes() {
+	client, err := NewClient()
+	if err != nil {
+		return
+	}
+	ctx := context.Background()
+	vols, err := client.VolumeList(ctx, filters.Args{})
+	if err != nil {
+		return
+	}
+	for _, vol := range vols.Volumes {
+		client.VolumeRemove(ctx, vol.Name, false)
+		client.VolumesPrune(ctx, filters.Args{})
+	}
+}
+
 func PeriodicCleanupDeadContainers() {
 	scheduler.Every(5).Minutes().NotImmediately().Run(cleanupDeadContainers)
+	scheduler.Every(10).Minutes().NotImmediately().Run(cleanupDeadVolumes)
 }

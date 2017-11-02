@@ -24,9 +24,9 @@ func getVolume(name string) (*Volume, string, error) {
 	if len(m) != 3 {
 		return nil, "", errors.Errorf("%v is not a valid volume format. %v", name, m)
 	}
-  if true {
-    pp.Println("volume = ", m[1], " version = ", m[2])
-  }
+	if true {
+		pp.Println("volume = ", m[1], " version = ", m[2])
+	}
 	volume, version := VolumeMap[m[1]], m[2]
 	if volume == nil {
 		return nil, "", errors.Errorf("%v volume is not supported", m[1])
@@ -45,7 +45,7 @@ func (CUDADriver) Create(req *volume.CreateRequest) error {
 	}
 	ok, err := vol.Exists()
 	if !ok {
-		vol.Create(LinkStrategy{})
+		return vol.Create(LinkStrategy{})
 	}
 	return nil
 }
@@ -111,10 +111,10 @@ func (CUDADriver) Remove(req *volume.RemoveRequest) error {
 func (c CUDADriver) Path(req *volume.PathRequest) (*volume.PathResponse, error) {
 
 	mres, err := c.Mount(&volume.MountRequest{Name: req.Name})
-  if err != nil {
-    return nil, err 
-  }
-  pres := &volume.PathResponse{Mountpoint: mres.Mountpoint}
+	if err != nil {
+		return nil, err
+	}
+	pres := &volume.PathResponse{Mountpoint: mres.Mountpoint}
 
 	return pres, nil
 }
