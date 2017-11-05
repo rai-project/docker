@@ -111,3 +111,9 @@ func Stdin(stdin io.Reader) ClientOption {
 		o.stdin = NewInStream(ioutil.NopCloser(stdin))
 	}
 }
+
+func ClientContext(ctx context.Context) ClientOption {
+	return func(o *ClientOptions) {
+		o.context = ctx
+	}
+}
