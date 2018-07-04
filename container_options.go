@@ -94,6 +94,7 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 			MemorySwap: -1,
 			Devices:    []container.DeviceMapping{},
 		},
+		Runtime: "nvidia",
 		Binds: []string{},
 		CapDrop: []string{ // see http://rhelblog.redhat.com/2016/10/17/secure-your-containers-with-this-one-weird-trick/
 			"chown",
