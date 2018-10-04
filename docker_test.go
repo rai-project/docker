@@ -1,10 +1,10 @@
 package docker
 
 import (
-	"os"
 	"testing"
 
 	"github.com/rai-project/config"
+	"go.uber.org/goleak"
 )
 
 func TestMain(m *testing.M) {
@@ -12,5 +12,7 @@ func TestMain(m *testing.M) {
 		config.VerboseMode(true),
 		config.DebugMode(true),
 	)
-	os.Exit(m.Run())
+
+	goleak.VerifyTestMain(m, goleak.IgnoreTopFunction("github.com/patrickmn/go-cache.(*janitor).Run"))
+
 }

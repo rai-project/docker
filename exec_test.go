@@ -165,5 +165,6 @@ func TestExec(t *testing.T) {
 	if !assert.NoError(t, err, "Failed to create docker client") {
 		return
 	}
+	defer c.client.Close()
 	suite.Run(t, c)
 }

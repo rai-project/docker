@@ -18,7 +18,8 @@ import (
 )
 
 type ContainerOptions struct {
-	name            string
+  name            string
+  runtime string
 	containerConfig *container.Config
 	hostConfig      *container.HostConfig
 	networkConfig   *network.NetworkingConfig
@@ -94,7 +95,6 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 			MemorySwap: -1,
 			Devices:    []container.DeviceMapping{},
 		},
-		Runtime: "nvidia",
 		Binds: []string{},
 		CapDrop: []string{ // see http://rhelblog.redhat.com/2016/10/17/secure-your-containers-with-this-one-weird-trick/
 			"chown",
@@ -121,6 +121,13 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		parentCtx:       c.options.context,
 		context:         ctx,
 		cancelFunc:      cancelFunc,
+	}
+}
+
+
+func Runtime(s string) ContainerOption {
+	return func(o *ContainerOptions) {
+		o.hostConfig.Runtime = s
 	}
 }
 

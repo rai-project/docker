@@ -73,6 +73,7 @@ func (c *Client) ImageBuildCached(name string, dockerReader io.Reader) error {
 	if err != nil {
 		return err
 	}
+
 	imageBuildCache.Set(name, time.Now(), cache.DefaultExpiration)
 
 	return nil
