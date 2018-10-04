@@ -675,6 +675,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:6e20045397a26e2e885824f62a651a3548506f87eea6c426ce03d1afa7481bc0"
+  name = "go.uber.org/goleak"
+  packages = [
+    ".",
+    "internal/stack",
+  ]
+  pruneopts = "UT"
+  revision = "b12bb1eedf12e90b75899bf8a73ce2d8fc4d9938"
+
+[[projects]]
+  branch = "master"
   digest = "1:f6abf1c508a7dd3c557eca09bdb8c12724611635fb6cf65531c78f52022bfae0"
   name = "golang.org/x/crypto"
   packages = [
@@ -865,6 +876,7 @@
     "github.com/sirupsen/logrus",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/suite",
+    "go.uber.org/goleak",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

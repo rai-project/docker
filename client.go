@@ -13,7 +13,8 @@ import (
 
 type Client struct {
 	*dc.Client
-	options ClientOptions
+	transport *http.Transport
+	options   ClientOptions
 }
 
 func NewClient(paramOpts ...ClientOption) (*Client, error) {
@@ -24,10 +25,11 @@ func NewClient(paramOpts ...ClientOption) (*Client, error) {
 
 	var httpClient *http.Client
 	if opts.tlsConfig != nil {
+		transport := &http.Transport{
+			TLSClientConfig: opts.tlsConfig,
+		}
 		httpClient = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: opts.tlsConfig,
-			},
+			Transport: transport,
 		}
 	}
 	client, err := dc.NewClient(opts.host, opts.apiVersion, httpClient, nil)
@@ -125,4 +127,11 @@ func (c *Client) RemoveImage(refName string) error {
 		},
 	)
 	return err
+}
+
+func (c *Client) Close() error {
+	if c.transport != nil {
+		c.transport.CloseIdleConnections()
+	}
+	return c.Client.Close()
 }
