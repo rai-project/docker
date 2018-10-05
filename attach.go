@@ -5,7 +5,6 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/pkg/errors"
-	"golang.org/x/sync/errgroup"
 )
 
 func (c *Container) Attach() error {
@@ -45,21 +44,17 @@ func (c *Container) Attach() error {
 		stderr: client.options.stderr,
 	}
 
-	g, ctx := errgroup.WithContext(c.options.context)
-	g.Go(func() error {
-		errHijack := holdHijackedConnection(
-			ctx,
-			strm,
-			c.options.containerConfig.Tty,
-			client.options.stdin,
-			client.options.stdout,
-			client.options.stderr,
-			resp,
-		)
-		if errHijack == nil {
-			return errAttach
-		}
-		return errHijack
-	})
-	return g.Wait()
+	errHijack := holdHijackedConnection(
+		ctx,
+		strm,
+		c.options.containerConfig.Tty,
+		client.options.stdin,
+		client.options.stdout,
+		client.options.stderr,
+		resp,
+	)
+	if errHijack == nil {
+		return errAttach
+	}
+	return errHijack
 }

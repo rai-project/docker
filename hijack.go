@@ -3,6 +3,7 @@ package docker
 import (
 	"context"
 	"io"
+	"io/ioutil"
 	"runtime"
 	"sync"
 
@@ -11,9 +12,81 @@ import (
 	"github.com/pkg/errors"
 )
 
+// redirectResponseToOutputStream redirect the response stream to stdout and stderr. When tty is true, all stream will
+// only be redirected to stdout.
+func redirectResponseToOutputStream(tty bool, outputStream, errorStream io.Writer, resp io.Reader) error {
+	if outputStream == nil {
+		outputStream = ioutil.Discard
+	}
+	if errorStream == nil {
+		errorStream = ioutil.Discard
+	}
+	var err error
+	if tty {
+		_, err = io.Copy(outputStream, resp)
+	} else {
+		_, err = stdcopy.StdCopy(outputStream, errorStream, resp)
+	}
+	return err
+}
+
+func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
+	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
+	resp types.HijackedResponse) error {
+	var (
+		restoreOnce sync.Once
+	)
+
+	if inputStream != nil && tty {
+		if err := setRawTerminal(streams); err != nil {
+			return err
+		}
+		defer func() {
+			restoreOnce.Do(func() {
+				restoreTerminal(streams, inputStream)
+			})
+		}()
+	}
+
+	receiveStdout := make(chan error)
+	if outputStream != nil || errorStream != nil {
+		go func() {
+			receiveStdout <- redirectResponseToOutputStream(tty, outputStream, errorStream, resp.Reader)
+		}()
+	}
+
+	stdinDone := make(chan struct{})
+	go func() {
+		if inputStream != nil {
+			io.Copy(resp.Conn, inputStream)
+		}
+		restoreOnce.Do(func() {
+			restoreTerminal(streams, inputStream)
+		})
+		resp.CloseWrite()
+		close(stdinDone)
+	}()
+
+	select {
+	case err := <-receiveStdout:
+		if err != nil {
+			log.Debugf("Error receiveStdout: %s", err)
+			return errors.Wrap(err, "while hijacking stdout")
+		}
+		return err
+	case <-stdinDone:
+		if outputStream != nil || errorStream != nil {
+			return <-receiveStdout
+		}
+	case <-ctx.Done():
+		break
+	}
+	return nil
+}
+
 // holdHijackedConnection handles copying input to and output from streams to the
 // connection
-func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
+func holdHijackedConnection1(ctx context.Context, streams Streams, tty bool,
 	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
 	resp types.HijackedResponse) error {
 	var (
