@@ -5,21 +5,26 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/imdario/mergo"
+	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	uuid "github.com/rai-project/uuid"
+	"github.com/spf13/cast"
 )
 
 type ContainerOptions struct {
-  name            string
-  runtime string
+	name            string
+	runtime         string
+	visibleGPUs     map[string]int
 	containerConfig *container.Config
 	hostConfig      *container.HostConfig
 	networkConfig   *network.NetworkingConfig
@@ -124,6 +129,34 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 	}
 }
 
+func GPUCount(cnt int) ContainerOption {
+	if GPUDeviceUsageState == nil {
+		st, err := NewGPUUsageState()
+		if err != nil {
+			panic(err)
+		}
+		GPUDeviceUsageState = st
+	}
+	return func(o *ContainerOptions) {
+		if o.containerConfig.Env == nil {
+			o.containerConfig.Env = []string{}
+		}
+		devices := make([]string, cnt)
+		o.visibleGPUs = make(map[string]int)
+		for ii := 0; ii < cnt; ii++ {
+			key, val, ok := GPUDeviceUsageState.RemoveOldest()
+			if !ok {
+				panic(errors.New("unable to remove oldest value from cache"))
+			}
+			o.visibleGPUs[cast.ToString(key)] = cast.ToInt(val)
+			devices[ii] = strconv.Itoa(ii)
+		}
+		o.containerConfig.Env = append(
+			o.containerConfig.Env,
+			"CUDA_VISIBLE_DEVICES="+strings.Join(devices, ","),
+		)
+	}
+}
 
 func Runtime(s string) ContainerOption {
 	return func(o *ContainerOptions) {

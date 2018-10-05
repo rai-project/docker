@@ -2,6 +2,7 @@ package docker
 
 import (
 	"context"
+	"time"
 
 	"github.com/docker/docker/api/types"
 )
@@ -84,10 +85,26 @@ func (c *Container) Stop() error {
 		c.options.cancelFunc()
 		c.isStarted = false
 	}()
+	if c.options.visibleGPUs != nil && GPUDeviceUsageState != nil {
+		for key, val := range c.options.visibleGPUs {
+			GPUDeviceUsageState.Add(key, val)
+		}
+	}
 	if c.isStarted {
-		c.kill()
+		if err := c.stop(); err != nil {
+			log.WithError(err).Errorf("failed to stop container %v", c.ID)
+		}
+		if err := c.kill(); err != nil {
+			log.WithError(err).Errorf("failed to stop container %v", c.ID)
+		}
 	}
 	return c.remove()
+}
+
+func (c *Container) stop() error {
+	containerStopTimeout := 30 * time.Second
+	err := c.client.ContainerStop(context.TODO(), c.ID, &containerStopTimeout)
+	return err
 }
 
 func (c *Container) killWithSignal(sig string) error {

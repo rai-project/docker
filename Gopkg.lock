@@ -216,7 +216,7 @@
     "pkg/term/windows",
   ]
   pruneopts = "UT"
-  revision = "29efa747f60e9f4dcd2128d26d55d9a2c40a71f4"
+  revision = "c77cfbfef5a8c2764256ef0979e0fb0f26f8e8c1"
 
 [[projects]]
   branch = "master"
@@ -280,6 +280,17 @@
   pruneopts = "UT"
   revision = "a720dfa8df582c51dee1b36feabb906bde1588bd"
   version = "v1.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0720474186f1c4b4c9018dc978c9c04cbd5ee765554fd8a294fdafb775fab0fd"
+  name = "github.com/flyaways/golang-lru"
+  packages = [
+    ".",
+    "simplelru",
+  ]
+  pruneopts = "UT"
+  revision = "bdd6594a7c32c717a915e25519988bfb88d1a54d"
 
 [[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
@@ -547,11 +558,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4ef34a447be8804e0b90db46ff89f47605f561376fd3115672d6eb5e5a88a45c"
+  digest = "1:2489f83eb17376e322fa7882f59d680bf7c05c5dc3d15d4c43b94b09d23816f4"
   name = "github.com/rai-project/nvidia-smi"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ea38dd9639b75efb751edb6f375c00140d1b37c3"
+  revision = "893a8c171b24c6781ef6db8b090747f73e825c51"
 
 [[projects]]
   branch = "master"
@@ -730,14 +741,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:39ebcc2b11457b703ae9ee2e8cca0f68df21969c6102cb3b705f76cca0ea0239"
-  name = "golang.org/x/sync"
-  packages = ["errgroup"]
-  pruneopts = "UT"
-  revision = "1d60e4601c6fd243af51cc01ddf169918a5407ca"
-
-[[projects]]
-  branch = "master"
   digest = "1:8a35cf7e4a316cee63d627d7de15b81901a19f8a3f9aff0d1a80c746a57234d6"
   name = "golang.org/x/sys"
   packages = [
@@ -839,6 +842,7 @@
     "github.com/docker/go-connections/tlsconfig",
     "github.com/docker/go-plugins-helpers/volume",
     "github.com/dustin/go-humanize",
+    "github.com/flyaways/golang-lru",
     "github.com/imdario/mergo",
     "github.com/junegunn/go-shellwords",
     "github.com/k0kubun/pp",
@@ -860,7 +864,6 @@
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/suite",
     "go.uber.org/goleak",
-    "golang.org/x/sync/errgroup",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

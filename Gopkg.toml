@@ -139,4 +139,4 @@
 
 [[constraint]]
   branch = "master"
-  name = "golang.org/x/sync"
+  name = "github.com/flyaways/golang-lru"
