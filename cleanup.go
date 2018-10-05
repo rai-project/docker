@@ -2,6 +2,7 @@ package docker
 
 import (
 	"context"
+	"time"
 
 	"github.com/carlescere/scheduler"
 	"github.com/docker/docker/api/types"
@@ -9,12 +10,13 @@ import (
 )
 
 func cleanupDeadContainers() {
-	client, err := NewClient()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	defer cancel()
+	client, err := NewClient(ClientContext(ctx))
 	if err != nil {
 		return
 	}
 	defer client.Close()
-	ctx := context.Background()
 	imgs, err := client.ImageList(
 		ctx,
 		types.ImageListOptions{
@@ -43,12 +45,13 @@ func cleanupDeadContainers() {
 }
 
 func cleanupDeadVolumes() {
-	client, err := NewClient()
+	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Minute)
+	defer cancel()
+	client, err := NewClient(ClientContext(ctx))
 	if err != nil {
 		return
 	}
 	defer client.Close()
-	ctx := context.Background()
 	vols, err := client.VolumeList(ctx, filters.Args{})
 	if err != nil {
 		return
