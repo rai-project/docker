@@ -12,6 +12,7 @@ import (
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/docker/pkg/ioutils"
 	"github.com/pkg/errors"
+	"github.com/rai-project/config"
 )
 
 const (
@@ -54,7 +55,7 @@ func getContextFromReader(r io.ReadCloser, dockerfileName string) (out io.ReadCl
 	}
 
 	// Input should be read as a Dockerfile.
-	tmpDir, err := ioutil.TempDir("", "docker-build-context-")
+	tmpDir, err := ioutil.TempDir(config.App.TempDir, "docker-build-context-")
 	if err != nil {
 		return nil, "", errors.Errorf("unable to create temporary context directory: %v", err)
 	}
