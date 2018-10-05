@@ -13,6 +13,7 @@ func cleanupDeadContainers() {
 	if err != nil {
 		return
 	}
+	defer client.Close()
 	ctx := context.Background()
 	imgs, err := client.ImageList(
 		ctx,
@@ -46,6 +47,7 @@ func cleanupDeadVolumes() {
 	if err != nil {
 		return
 	}
+	defer client.Close()
 	ctx := context.Background()
 	vols, err := client.VolumeList(ctx, filters.Args{})
 	if err != nil {
