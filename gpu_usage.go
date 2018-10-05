@@ -19,7 +19,7 @@ func NewGPUUsageState() (*GPUUsageState, error) {
 	if smi == nil {
 		return nil, errors.New("no gpu found")
 	}
-	cache, err := lru.New(nvidiasmi.GPUCount)
+	cache, err := lru.New(nvidiasmi.GPUCount * nvidiasmi.HyperQSize)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to create lru cache")
 	}

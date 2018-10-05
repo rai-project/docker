@@ -861,6 +861,7 @@
     "github.com/rai-project/uuid",
     "github.com/rai-project/vipertags",
     "github.com/sirupsen/logrus",
+    "github.com/spf13/cast",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/suite",
     "go.uber.org/goleak",
