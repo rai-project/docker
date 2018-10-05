@@ -32,7 +32,11 @@ func NewClient(paramOpts ...ClientOption) (*Client, error) {
 			Transport: transport,
 		}
 	}
-	client, err := dc.NewClient(opts.host, opts.apiVersion, httpClient, nil)
+	client, err := dc.NewClientWithOpts(
+		dc.WithHost(opts.host),
+		dc.WithVersion(opts.apiVersion),
+		dc.WithHTTPClient(httpClient),
+	)
 	if err != nil {
 		log.WithError(err).Error("Not able to create docker client")
 		return nil, err

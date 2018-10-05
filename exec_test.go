@@ -8,6 +8,7 @@ import (
 	"testing"
 	"unicode"
 
+	"github.com/rai-project/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -90,6 +91,7 @@ func (suite *ExecTestSuite) TestRun() {
 		"usr",
 		"var",
 	}
+
 	assert.Equal(t, dirs, expected)
 
 }
@@ -122,7 +124,6 @@ func (suite *ExecTestSuite) TestExecutionOutput() {
 
 }
 
-/*
 func TestExecutionOutput2(t *testing.T) {
 
 	config.Init()
@@ -130,6 +131,8 @@ func TestExecutionOutput2(t *testing.T) {
 	client, err := NewClient()
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
+
+	defer client.Close()
 
 	cont, err := NewContainer(client)
 	assert.NoError(t, err)
@@ -158,7 +161,6 @@ func TestExecutionOutput2(t *testing.T) {
 	run("ls -l /")
 
 }
-*/
 
 func TestExec(t *testing.T) {
 	c, err := NewExecTestSuite(t)

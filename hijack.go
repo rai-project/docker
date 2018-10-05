@@ -17,7 +17,6 @@ func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
 	resp types.HijackedResponse) error {
 	var (
-		err         error
 		restoreOnce sync.Once
 	)
 
@@ -35,6 +34,7 @@ func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 	receiveStdout := make(chan error, 1)
 	if outputStream != nil || errorStream != nil {
 		go func() {
+			var err error
 			// When TTY is ON, use regular copy
 			if tty && outputStream != nil {
 				_, err = io.Copy(outputStream, resp.Reader)
@@ -77,6 +77,7 @@ func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 			log.Debugf("Error receiveStdout: %s", err)
 			return errors.Wrap(err, "while hijacking stdout")
 		}
+		return nil
 	case <-stdinDone:
 		if outputStream != nil || errorStream != nil {
 			select {
@@ -85,10 +86,13 @@ func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 					log.Debugf("Error receiveStdout: %s", err)
 					return errors.Wrap(err, "stdin done while hijacking stdout")
 				}
+				return nil
 			case <-ctx.Done():
+				break
 			}
 		}
 	case <-ctx.Done():
+		break
 	}
 
 	return nil

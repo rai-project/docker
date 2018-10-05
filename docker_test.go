@@ -13,6 +13,9 @@ func TestMain(m *testing.M) {
 		config.DebugMode(true),
 	)
 
-	goleak.VerifyTestMain(m, goleak.IgnoreTopFunction("github.com/patrickmn/go-cache.(*janitor).Run"))
+	goleak.VerifyTestMain(m,
+		goleak.IgnoreTopFunction("github.com/patrickmn/go-cache.(*janitor).Run"),
+		goleak.IgnoreTopFunction("github.com/rai-project/docker/vendor/github.com/patrickmn/go-cache.(*janitor).Run"),
+	)
 
 }

@@ -136,3 +136,7 @@
 [[constraint]]
   branch = "master"
   name = "go.uber.org/goleak"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/sync"

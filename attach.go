@@ -5,11 +5,12 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/pkg/errors"
-	"github.com/rai-project/utils/promise"
+	"golang.org/x/sync/errgroup"
 )
 
 func (c *Container) Attach() error {
 	client := c.client
+	ctx := c.options.context
 	attachOpts := types.ContainerAttachOptions{
 		Stream: true,
 		Stdin:  client.options.stdin != nil,
@@ -23,6 +24,11 @@ func (c *Container) Attach() error {
 		c.ID,
 		attachOpts,
 	)
+
+	if errAttach == nil {
+		defer resp.Close()
+	}
+
 	if errAttach != nil && errAttach != httputil.ErrPersistEOF {
 		// ContainerAttach returns an ErrPersistEOF (connection closed)
 		// means server met an error and put it in Hijacked connection
@@ -38,10 +44,11 @@ func (c *Container) Attach() error {
 		stdout: client.options.stdout,
 		stderr: client.options.stderr,
 	}
-	cErr := promise.Go(func() error {
-		defer resp.Close()
+
+	g, ctx := errgroup.WithContext(c.options.context)
+	g.Go(func() error {
 		errHijack := holdHijackedConnection(
-			c.options.context,
+			ctx,
 			strm,
 			c.options.containerConfig.Tty,
 			client.options.stdin,
@@ -54,8 +61,5 @@ func (c *Container) Attach() error {
 		}
 		return errHijack
 	})
-	if cErr != nil {
-		return <-cErr
-	}
-	return nil
+	return g.Wait()
 }

@@ -716,6 +716,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:39ebcc2b11457b703ae9ee2e8cca0f68df21969c6102cb3b705f76cca0ea0239"
+  name = "golang.org/x/sync"
+  packages = ["errgroup"]
+  pruneopts = "UT"
+  revision = "1d60e4601c6fd243af51cc01ddf169918a5407ca"
+
+[[projects]]
+  branch = "master"
   digest = "1:c1fee1a2c739c7b220dc3de939f659dce271fa8d9de155cb8cfcfb99c941cbc3"
   name = "golang.org/x/sys"
   packages = [
@@ -877,6 +885,7 @@
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/suite",
     "go.uber.org/goleak",
+    "golang.org/x/sync/errgroup",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

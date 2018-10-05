@@ -119,6 +119,8 @@ func (e *Execution) Output() ([]byte, error) {
 }
 
 func (e *Execution) Run() error {
+	defer closeFds(e)
+
 	if err := e.Start(); err != nil {
 		return err
 	}
@@ -178,6 +180,7 @@ func (e *Execution) Start() error {
 			Tty:    isTty,
 		},
 	)
+
 	if errAttach != nil && errAttach != httputil.ErrPersistEOF {
 		// ContainerAttach returns an ErrPersistEOF (connection closed)
 		// means server met an error and put it in Hijacked connection
@@ -243,11 +246,12 @@ func (e *Execution) StdoutPipe() (io.ReadCloser, error) {
 }
 
 func (e *Execution) Wait() error {
+
+	defer closeFds(e)
+
 	if !e.isStarted {
 		return nil
 	}
-
-	defer closeFds(e.closeAfterWait)
 
 	if err := <-e.wc; err != nil {
 		return errors.Wrap(err, "failed to wait for hijacked connection")
@@ -267,10 +271,12 @@ func (e *Execution) Wait() error {
 	return backoff.Retry(inspect, backoff.NewExponentialBackOff())
 }
 
-func closeFds(l []io.Closer) {
-	for _, fd := range l {
+func closeFds(e *Execution) {
+	fds := e.closeAfterWait
+	for _, fd := range fds {
 		fd.Close()
 	}
+	e.closeAfterWait = []io.Closer{}
 }
 
 // ExitError reports an unsuccessful exit by a command.
