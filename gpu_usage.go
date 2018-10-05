@@ -23,7 +23,7 @@ func NewGPUUsageState() (*GPUUsageState, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to create lru cache")
 	}
-	for n := 0; n < nvidiasmi.HyperQ; n++ {
+	for n := 0; n < nvidiasmi.HyperQSize; n++ {
 		for ii := range smi.GPUS {
 			key := fmt.Sprintf("dev[%v];hyperq[%v]", ii, n)
 			cache.Add(key, ii)
