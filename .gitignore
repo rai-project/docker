@@ -46,3 +46,5 @@ push_info_test.go
 
 vendor
 glide.lock
+
+.vscode
