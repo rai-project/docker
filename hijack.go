@@ -30,7 +30,7 @@ func redirectResponseToOutputStream(tty bool, outputStream, errorStream io.Write
 	return err
 }
 
-func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
+func holdHijackedConnection0(ctx context.Context, streams Streams, tty bool,
 	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
 	resp types.HijackedResponse) error {
 	var (
@@ -86,7 +86,7 @@ func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 
 // holdHijackedConnection handles copying input to and output from streams to the
 // connection
-func holdHijackedConnection1(ctx context.Context, streams Streams, tty bool,
+func holdHijackedConnection(ctx context.Context, streams Streams, tty bool,
 	inputStream io.ReadCloser, outputStream, errorStream io.Writer,
 	resp types.HijackedResponse) error {
 	var (
