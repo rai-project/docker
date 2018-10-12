@@ -91,12 +91,14 @@ func (c *Container) Stop() error {
 		}
 	}
 	if c.isStarted {
-		if err := c.stop(); err != nil {
-			log.WithError(err).Errorf("failed to stop container %v", c.ID)
-		}
-		if err := c.kill(); err != nil {
-			log.WithError(err).Errorf("failed to stop container %v", c.ID)
-		}
+		// if err := c.stop(); err != nil {
+		// 	log.WithError(err).Errorf("failed to stop container %v", c.ID)
+		// }
+		// if err := c.kill(); err != nil {
+		// 	log.WithError(err).Errorf("failed to stop container %v", c.ID)
+		// }
+		c.stop()
+		c.kill()
 	}
 	return c.remove()
 }
