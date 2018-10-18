@@ -62,6 +62,7 @@ func cleanupDeadVolumes() {
 	}
 }
 
+// cleanup dead containers and volumes frequently
 func PeriodicCleanupDeadContainers() {
 	scheduler.Every(5).Minutes().NotImmediately().Run(cleanupDeadContainers)
 	scheduler.Every(10).Minutes().NotImmediately().Run(cleanupDeadVolumes)
