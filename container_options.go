@@ -16,8 +16,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
-	nvidiasmi "github.com/rai-project/nvidia-smi"
-	uuid "github.com/rai-project/uuid"
+	"github.com/rai-project/nvidia-smi"
+	"github.com/rai-project/uuid"
 	"github.com/spf13/cast"
 )
 
@@ -149,7 +149,7 @@ func GPUCount(cnt int) ContainerOption {
 				panic(errors.New("unable to remove oldest value from cache"))
 			}
 			o.visibleGPUs[cast.ToString(key)] = cast.ToInt(val)
-			devices[ii] = strconv.Itoa(ii)
+			devices[ii] = strconv.Itoa(cast.ToInt(val))
 		}
 		o.containerConfig.Env = append(
 			o.containerConfig.Env,
