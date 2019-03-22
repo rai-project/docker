@@ -18,10 +18,7 @@ type Client struct {
 }
 
 func NewClient(paramOpts ...ClientOption) (*Client, error) {
-	opts := NewClientOptions()
-	for _, o := range paramOpts {
-		o(opts)
-	}
+	opts := NewClientOptions(paramOpts...)
 
 	var httpClient *http.Client
 	if opts.tlsConfig != nil {

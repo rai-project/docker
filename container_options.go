@@ -16,7 +16,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/docker/cuda"
-	"github.com/rai-project/nvidia-smi"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/uuid"
 	"github.com/spf13/cast"
 )
@@ -67,7 +67,7 @@ func getEnv() []string {
 	return env
 }
 
-func NewContainerOptions(c *Client) *ContainerOptions {
+func NewContainerOptions(c *Client, opts ...ContainerOption) *ContainerOptions {
 	containerConfig := &container.Config{
 		Hostname: fmt.Sprintf("%s-run-%s", config.App.Name, uuid.NewV4()),
 		Env:      getEnv(),
@@ -119,7 +119,7 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 	}
 	networkConfig := &network.NetworkingConfig{}
 	ctx, cancelFunc := context.WithTimeout(c.options.context, Config.TimeLimit)
-	return &ContainerOptions{
+	res := &ContainerOptions{
 		containerConfig: containerConfig,
 		hostConfig:      hostConfig,
 		networkConfig:   networkConfig,
@@ -127,6 +127,10 @@ func NewContainerOptions(c *Client) *ContainerOptions {
 		context:         ctx,
 		cancelFunc:      cancelFunc,
 	}
+	for _, o := range opts {
+		o(res)
+	}
+	return res
 }
 
 func GPUCount(cnt int) ContainerOption {

@@ -15,10 +15,8 @@ type Container struct {
 }
 
 func NewContainer(client *Client, paramOpts ...ContainerOption) (*Container, error) {
-	options := NewContainerOptions(client)
-	for _, o := range paramOpts {
-		o(options)
-	}
+	options := NewContainerOptions(client, paramOpts...)
+
 	if !client.HasImage(options.containerConfig.Image) {
 		err := client.PullImage(options.containerConfig.Image)
 		if err != nil {

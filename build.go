@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -17,33 +18,50 @@ var (
 	imageBuildCache *cache.Cache
 )
 
-func (c *Client) ImageBuild(name string, dockerfilePath string, archiveReader io.Reader) error {
+func (c *Client) ImageBuild(iopts ...BuildOption) error {
+
+	opts := NewBuildOptions(iopts...)
+
+	if opts.context == nil {
+		opts.context = c.options.context
+	}
 
 	// Setup an upload progress bar
 	stdout := c.options.stdout
-	if stdout == nil {
+	if stdout == nil || opts.quiet {
 		stdout = NewOutStream(ioutil.Discard)
 	}
 	stderr := c.options.stderr
-	if stderr == nil {
+	if stderr == nil || opts.quiet {
 		stderr = NewOutStream(ioutil.Discard)
 	}
 
 	progressOutput := streamformatter.NewProgressOutput(streamformatter.NewStdoutWriter(stdout))
 
-	buildCtx, _, err := getContextFromReader(ioutil.NopCloser(archiveReader), dockerfilePath)
+	buildCtx, _, err := getContextFromReader(ioutil.NopCloser(opts.archiveReader), opts.dockerFilePath)
 	if err != nil {
 		return err
 	}
 
 	var body io.Reader = progress.NewProgressReader(buildCtx, progressOutput, 0, "", "Sending build context to Docker daemon")
 
-	buildOptions := types.ImageBuildOptions{
-		Dockerfile: dockerfilePath,
-		Tags:       []string{name},
+	buildArgs := map[string]*string{}
+	for k, v := range opts.args {
+		val := v
+		buildArgs[k] = &val
 	}
 
-	response, err := c.Client.ImageBuild(c.options.context, body, buildOptions)
+	buildOptions := types.ImageBuildOptions{
+		BuildID:        opts.id,
+		Dockerfile:     opts.dockerFilePath,
+		Tags:           opts.tags,
+		Labels:         opts.labels,
+		BuildArgs:      buildArgs,
+		SuppressOutput: opts.quiet,
+		NoCache:        !opts.cache,
+	}
+
+	response, err := c.Client.ImageBuild(opts.context, body, buildOptions)
 	if err != nil {
 		fmt.Fprintf(stderr, "%v", err)
 		return err
@@ -60,16 +78,21 @@ func (c *Client) ImageBuild(name string, dockerfilePath string, archiveReader io
 	return nil
 }
 
-func (c *Client) ImageBuildCached(name string, dockerReader io.Reader) error {
-	if imageBuildCache == nil {
-		return c.ImageBuild(name, "Dockerfile", dockerReader)
+func (c *Client) ImageBuildCached(iopts ...BuildOption) error {
+
+	opts := NewBuildOptions(iopts...)
+
+	if imageBuildCache == nil || len(opts.tags) == 0 {
+		return c.ImageBuild(iopts...)
 	}
+
+	name := strings.Join(opts.tags, ";")
 
 	if _, found := imageBuildCache.Get(name); found {
 		return nil
 	}
 
-	err := c.ImageBuild(name, "Dockerfile", dockerReader)
+	err := c.ImageBuild(iopts...)
 	if err != nil {
 		return err
 	}

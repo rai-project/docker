@@ -23,8 +23,8 @@ type ClientOptions struct {
 
 type ClientOption func(*ClientOptions)
 
-func NewClientOptions() *ClientOptions {
-	opts := &ClientOptions{
+func NewClientOptions(opts ...ClientOption) *ClientOptions {
+	res := &ClientOptions{
 		host:       Config.Host,
 		apiVersion: Config.APIVersion,
 		stderr:     NewOutStream(ioutil.Discard),
@@ -33,9 +33,12 @@ func NewClientOptions() *ClientOptions {
 		context:    context.Background(),
 	}
 	if com.IsDir(Config.CertPath) {
-		TLSConfig(Config.CertPath, Config.TLSVerify)(opts)
+		TLSConfig(Config.CertPath, Config.TLSVerify)(res)
 	}
-	return opts
+	for _, o := range opts {
+		o(res)
+	}
+	return res
 }
 
 func Host(s string) ClientOption {
